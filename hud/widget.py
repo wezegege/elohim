@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-class Widget(object):
-  """Docstring for Widget """
+from hud import Entity
 
-  def __init__(self, **kwargs):
+class Widget(Entity):
+
+  def __init__(self, *args, **kwargs):
     """@todo: to be defined """
     self.logger = logging.getLogger(self.__class__.__name)
-    self.children = list()
     self.parent = kwargs.get(parent, None)
-    self.parameters = dict()
-    self.surfaces = list()
-    self.eventHandlers = list()
-    self.renderers = list()
-    self.computers = list()
+    self.parameters = list()
+    self.children = list()
+    self.controllers = list()
+    self.views = list()
 
   def __getattr__(self, name):
     if name in self.parameters:
@@ -27,23 +26,16 @@ class Widget(object):
     else:
       super(Widget, self).__setattr__(name, value)
 
-  def handleEvent(self, event):
-    for handler in self.eventHandlers:
-      handler.handle(event)
+  def handle(self, event):
+    for controller in self.controllers:
+      controller.handle(event)
     for child in self.children:
-      child.handleEvent(event)
-
-  def compute(self):
-    for computer in self.computers:
-      computer.compute()
-    for child in self.children:
-      child.compute()
+      child.handle(event)
 
   def render(self, window):
-    for renderer in self.renderers:
-      renderer.render()
-    for surface in self.surfaces:
-      window.Draw(surface)
+    for view in self.views:
+      for surface in view.render():
+        window.Draw(surface)
     for child in self.children:
-      child.draw(window)
+      child.render(window)
 
