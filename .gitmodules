@@ -1,9 +1,0 @@
-[submodule "doc/gui"]
-	path = doc/gui
-	url = git@github.com:wezegege/python-pokertemplate.wiki.git
-[submodule "doc/main"]
-	path = doc/main
-	url = git@github.com:wezegege/python-pokertemplate.wiki.git
-[submodule "doc/old"]
-	path = doc/old
-	url = git@github.com:wezegege/PokerTemplate.wiki.git
