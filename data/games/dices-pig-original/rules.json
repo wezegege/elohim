@@ -1,0 +1,72 @@
+{
+  'name' : 'Pig',
+  'players-min' : 2,
+  'players-max' : 10,
+  'categories' : ['dices', 'gambling'],
+  'rules' : [
+  {
+    'rule' : 'input:foreach-player-condition-compare',
+    'message' : 'player-turn',
+    'source' : 'score:permanent',
+    'comparision' : 'greater-equal',
+    'value' : 100,
+    'actions' : {
+      'rule' : 'input:while-not-end-turn',
+      'actions' : {
+        'rule' : 'input:ask-player-choice',
+        'choice' : [
+        {
+          'actions' [
+          {
+            'rule' : 'core:transfer',
+            'source' : 'score:temporary',
+            'destination' : 'score:permanent',
+            'message' : 'hold',
+          },
+          {
+            'rule' : 'input:end-turn',
+          },
+          ],
+        },
+        {
+          'message' :'roll-dice',
+          'actions' : [
+          {
+            'rule' : 'roll:dice',
+            'size' : 6,
+            'destination' : 'dice',
+            'message' : 'roll',
+          },
+          {
+            'rule' :'core:if-equal',
+            'variable' : 'roll:dice',
+            'value' : 1,
+            'if-true' : [
+            {
+              'rule' : 'score:reset',
+              'source' : 'temporary',
+              'message' : 'reset',
+            },
+            {
+              'rule' : 'input:end-turn',
+            },
+            ],
+            'if-false' : {
+              'rule' : 'core:add-variable',
+              'source' : 'score:temporary',
+              'variable' : 'roll:dice',
+              'message' : 'add',
+            },
+          ],
+        },
+        ],
+      },
+    },
+  },
+  {
+    'rule' : 'core:find-winner-best',
+    'source' : 'score:permanent',
+    'message' : 'end-game',
+  },
+  ],
+}
