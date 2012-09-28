@@ -1,7 +1,12 @@
 The game is called "Pig"
+It's author is "Kevin TRAN" <"wezegege@live.fr">
+This game was released on "September 28th 2012"
+This is the version "0.1.0"
+The home page for this game is on "http://github.com/wezegege/python-pokertemplate"
 It is for 2 players at least
-This game is in categories "dices" and "gambling"
-Rules are :
+This game is in categories "dices", "gambling"
+
+The rules are :
   For each player until someone's permanent score >= 100 (player-turn)
     While player's turn continue
       Face player with these options :

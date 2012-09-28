@@ -17,7 +17,7 @@ class Descriptor(object):
     ...       'source': 'variable',
     ...       'operator' : ('enum', ('=', '<', '>')),
     ...       'destination' : 'variable',
-    ...       'value' : 'int-or-string',
+    ...       'value' : 'string',
     ...       },
     ...     blocks='actions')
     >>> desc = Descriptor(

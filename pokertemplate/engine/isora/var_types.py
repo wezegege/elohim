@@ -5,6 +5,7 @@ import re
 
 types = dict()
 
+
 def object_type(cls):
   """
   >>> @object_type
@@ -22,15 +23,18 @@ def object_type(cls):
     cls.types = types
   return cls
 
+
 @object_type
 class Variable(object):
   """
   >>> 'variable' in types
   True
   >>> variable = Variable()
-  >>> bool(re.match(variable.pattern, "player's temporary score", re.VERBOSE))
+  >>> bool(re.match(variable.pattern,
+  ...     "player's temporary score", re.VERBOSE))
   True
-  >>> result = re.search(variable.pattern, "player's temporary score", re.VERBOSE)
+  >>> result = re.search(variable.pattern,
+  ...     "player's temporary score", re.VERBOSE)
   >>> result.group(0)
   "player's temporary score"
   >>> variable.transform(result.group(0))
@@ -65,13 +69,14 @@ class Variable(object):
     result = ':'.join(begin + end)
     return result
 
+
 @object_type
 class Integer(object):
   """
   >>> 'int' in types
   True
   >>> integer = Integer()
-  >>> bool(re.match(integer.pattern, "1234", re.VERBOSE))
+  >>> bool(re.match(integer.pattern, "-1234", re.VERBOSE))
   True
   >>> result = re.search(integer.pattern, "6465", re.VERBOSE)
   >>> result.group(0)
@@ -81,7 +86,7 @@ class Integer(object):
   """
 
   name = 'int'
-  pattern = r"\d+"
+  pattern = r"-?\d+"
 
   def transform(self, content):
     """
@@ -90,6 +95,34 @@ class Integer(object):
     1234
     """
     return int(content)
+
+
+@object_type
+class Float(object):
+  """
+  >>> 'float' in types
+  True
+  >>> double = Float()
+  >>> bool(re.match(double.pattern, "1234", re.VERBOSE))
+  True
+  >>> result = re.search(double.pattern, "-1.65e-2", re.VERBOSE)
+  >>> result.group(0)
+  '-1.65e-2'
+  >>> double.transform(result.group(0))
+  -0.0165
+  """
+
+  name = 'float'
+  pattern = r"-?\d+(?:\.\d+)?(?:e-?\d+)?"
+
+  def transform(self, content):
+    """
+    >>> double = Float()
+    >>> double.transform("34.24e2")
+    3424.0
+    """
+    return float(content)
+
 
 @object_type
 class String(object):
@@ -117,15 +150,52 @@ class String(object):
     """
     return content.strip()[1:-1]
 
+
+@object_type
+class Version(object):
+  """
+  >>> 'version' in types
+  True
+  >>> version = Version()
+  >>> all(re.match(version.pattern, vers, re.VERBOSE)
+  ...     for vers in ('1.0.0.0', '1.0.1a2.dev456', '1.0a2',
+  ...     '1.0a2.1', '1.0b1.dev456', '1.0.post456.dev34'))
+  True
+  >>> result = re.search(version.pattern, '1.0a2', re.VERBOSE)
+  >>> result.group(0)
+  '1.0a2'
+  >>> version.transform(result.group(0))
+  '1.0a2'
+  """
+
+  name = 'version'
+  pattern = r"""
+      \d+(?:\.\d+)+
+      (?:(?:a|b|c|rc)\d+(?:\.\d+)*)?
+      (?:\.post\d+)?
+      (?:\.dev\d+)?
+      """
+
+  def transform(self, content):
+    """
+    >>> version = Version()
+    >>> version.transform('1.0b1.dev456')
+    '1.0b1.dev456'
+    """
+    return content
+
+
 @object_type
 class List(object):
   """
   >>> 'list' in types
   True
   >>> stringlist = List('string')
-  >>> bool(re.match(stringlist.pattern, '"dice", "gambling", "cards"', re.VERBOSE))
+  >>> bool(re.match(stringlist.pattern,
+  ...     '"dice", "gambling", "cards"', re.VERBOSE))
   True
-  >>> result = re.search(stringlist.pattern, '"dice", "gambling", "cards"', re.VERBOSE)
+  >>> result = re.search(stringlist.pattern,
+  ...     '"dice", "gambling", "cards"', re.VERBOSE)
   >>> result.group(0)
   '"dice", "gambling", "cards"'
   >>> stringlist.transform(result.group(0))
@@ -138,12 +208,9 @@ class List(object):
     """
     >>> stringlist = List('string')
     >>> stringlist.pattern
-    '\\n          ".+"           # first element\\n          (?:,".+")*   # following elements\\n        '
+    '".+"(?:, *".+")*'
     """
-    result = r"""
-          {element}           # first element
-          (?:,{element})*   # following elements
-        """.format(element=self.element.pattern)
+    result = r"{element}(?:, *{element})*".format(element=self.element.pattern)
     return result
 
   def __init__(self, element_name, *args):
@@ -158,7 +225,9 @@ class List(object):
     >>> List('string').transform('"dice"')
     ['dice']
     """
-    return [self.element.transform(name) for name in content.split(',') if name]
+    return [self.element.transform(name)
+        for name in content.split(',') if name]
+
 
 @object_type
 class Enum(object):
@@ -200,14 +269,14 @@ class Enum(object):
         values = args[0]
         if isinstance(values, (list, tuple)):
           self.values = dict((
-            (value, value) for value in values))
+             (value, value) for value in values))
         elif isinstance(values, dict):
           self.values = values
         else:
           self.values = {values: values}
       else:
         self.values = dict((
-          (value, value) for value in args))
+            (value, value) for value in args))
     else:
       self.values = kwargs
 
@@ -232,40 +301,3 @@ class Enum(object):
     """
     assert content in self.values
     return self.values[content]
-
-@object_type
-class IntOrString(object):
-  """
-  >>> 'int-or-string' in types
-  True
-  >>> intstr = IntOrString()
-  >>> bool(re.match(intstr.pattern, "1234", re.VERBOSE))
-  True
-  >>> result = re.search(intstr.pattern, "6465", re.VERBOSE)
-  >>> result.group(0)
-  '6465'
-  >>> intstr.transform(result.group(0))
-  6465
-  >>> result = re.search(intstr.pattern, '"coucou"', re.VERBOSE)
-  >>> result.group(0)
-  '"coucou"'
-  >>> intstr.transform(result.group(0))
-  'coucou'
-  """
-
-  name = 'int-or-string'
-  pattern = r'".+"|\d+'
-
-  def transform(self, content):
-    """
-    >>> intstr = IntOrString()
-    >>> intstr.transform("1234")
-    1234
-    >>> intstr.transform('"coucou"')
-    'coucou'
-    """
-    content = content.strip()
-    if content.startswith('"') and content.endswith('"'):
-      return content[1:-1]
-    else:
-      return int(content)

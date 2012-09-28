@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
-from main import __version__
+from pokertemplate import __version__
 
 setup(
     name='PokerTemplate',
