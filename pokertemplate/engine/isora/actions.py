@@ -8,12 +8,30 @@ class Descriptor(object):
   descriptors = list()
 
   def __init__(self, action, sentences, parameters=None, blocks=None):
+    """
+    >>> desc = Descriptor(
+    ...     action=object(),
+    ...     sentences=[r'If {source} {operator} {destination}',
+    ...       r'If {source} {operator} {value}'],
+    ...     parameters={
+    ...       'source': 'variable',
+    ...       'operator' : ('enum', ('=', '<', '>')),
+    ...       'destination' : 'variable',
+    ...       'value' : 'int-or-string',
+    ...       },
+    ...     blocks='actions')
+    >>> desc = Descriptor(
+    ...     action=object(),
+    ...     sentences=r'End turn')
+    """
     self.action = action
+    if isinstance(sentences, str):
+      sentences = [sentences]
     self.sentences = sentences
     if not parameters:
       parameters = dict()
     self.parameters = dict()
-    for name, param_type in parameters:
+    for name, param_type in parameters.items():
       if isinstance(param_type, tuple):
         param_type, args = param_type
       else:
@@ -22,13 +40,13 @@ class Descriptor(object):
       self.parameters[name] = types[param_type](*args)
     self.param_dict = dict((
         (name, '(?P<{name}>{value})'.format(name=name, value=param_type.pattern))
-        for name, param_type in self.parameters))
-    self.blocks = blocks if blocks else list()
-
-  @classmethod
-  def register(cls, desc):
-    assert desc not in cls.descriptors
-    cls.descriptors.append(desc)
+        for name, param_type in self.parameters.items()))
+    if not blocks:
+      blocks = list()
+    elif isinstance(blocks, (str)):
+      blocks = [blocks]
+    self.blocks = blocks
+    self.descriptors.append(self)
 
   @classmethod
   def from_desc(cls, content):

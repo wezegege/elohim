@@ -38,14 +38,14 @@ class Variable(object):
   """
 
   name = 'variable'
-  pattern = r"""(
+  pattern = r"""
         \w[\w\d_-]+       # variable name
         (?:'s?)?          # possession
         (?:               # other names
           \s+\w[\w\d_-]+
           (?:'s?)?
         )*
-      )"""
+      """
 
   def transform(self, content):
     """
@@ -97,25 +97,25 @@ class String(object):
   >>> 'string' in types
   True
   >>> string = String()
-  >>> bool(re.match(string.pattern, "dice, gambling, cards", re.VERBOSE))
+  >>> bool(re.match(string.pattern, '"dice"', re.VERBOSE))
   True
-  >>> result = re.search(string.pattern, "dice, gambling, cards", re.VERBOSE)
+  >>> result = re.search(string.pattern, '"dice"', re.VERBOSE)
   >>> result.group(0)
-  'dice, gambling, cards'
+  '"dice"'
   >>> string.transform(result.group(0))
-  'dice, gambling, cards'
+  'dice'
   """
 
   name = 'string'
-  pattern = r".+"
+  pattern = r'".+"'
 
   def transform(self, content):
     """
     >>> string = String()
-    >>> string.transform('dice, gambling, cards')
-    'dice, gambling, cards'
+    >>> string.transform('"dice"')
+    'dice'
     """
-    return content.strip()
+    return content.strip()[1:-1]
 
 @object_type
 class List(object):
@@ -123,11 +123,11 @@ class List(object):
   >>> 'list' in types
   True
   >>> stringlist = List('string')
-  >>> bool(re.match(stringlist.pattern, "dice, gambling, cards", re.VERBOSE))
+  >>> bool(re.match(stringlist.pattern, '"dice", "gambling", "cards"', re.VERBOSE))
   True
-  >>> result = re.search(stringlist.pattern, "dice, gambling, cards", re.VERBOSE)
+  >>> result = re.search(stringlist.pattern, '"dice", "gambling", "cards"', re.VERBOSE)
   >>> result.group(0)
-  'dice, gambling, cards'
+  '"dice", "gambling", "cards"'
   >>> stringlist.transform(result.group(0))
   ['dice', 'gambling', 'cards']
   """
@@ -138,12 +138,12 @@ class List(object):
     """
     >>> stringlist = List('string')
     >>> stringlist.pattern
-    '(\\n          .+           # first element\\n          (?:,.+)*   # following elements\\n        )'
+    '\\n          ".+"           # first element\\n          (?:,".+")*   # following elements\\n        '
     """
-    result = r"""(
+    result = r"""
           {element}           # first element
           (?:,{element})*   # following elements
-        )""".format(element=self.element.pattern)
+        """.format(element=self.element.pattern)
     return result
 
   def __init__(self, element_name, *args):
@@ -153,9 +153,9 @@ class List(object):
 
   def transform(self, content):
     """
-    >>> List('string').transform("dice, gambling, cards")
+    >>> List('string').transform('"dice", "gambling", "cards"')
     ['dice', 'gambling', 'cards']
-    >>> List('string').transform("dice")
+    >>> List('string').transform('"dice"')
     ['dice']
     """
     return [self.element.transform(name) for name in content.split(',') if name]
@@ -216,9 +216,9 @@ class Enum(object):
     """
     >>> enum = Enum('a', 'b', 'c')
     >>> enum.pattern
-    '(a|c|b)'
+    'a|c|b'
     """
-    result = r'({elements})'.format(elements='|'.join((re.escape(element) for element in self.values)))
+    result = '|'.join((re.escape(element) for element in self.values))
     return result
 
   def transform(self, content):
@@ -246,25 +246,26 @@ class IntOrString(object):
   '6465'
   >>> intstr.transform(result.group(0))
   6465
-  >>> result = re.search(intstr.pattern, "coucou", re.VERBOSE)
+  >>> result = re.search(intstr.pattern, '"coucou"', re.VERBOSE)
   >>> result.group(0)
-  'coucou'
+  '"coucou"'
   >>> intstr.transform(result.group(0))
   'coucou'
   """
 
   name = 'int-or-string'
-  pattern = r".+"
+  pattern = r'".+"|\d+'
 
   def transform(self, content):
     """
     >>> intstr = IntOrString()
     >>> intstr.transform("1234")
     1234
-    >>> intstr.transform("coucou")
+    >>> intstr.transform('"coucou"')
     'coucou'
     """
-    try:
+    content = content.strip()
+    if content.startswith('"') and content.endswith('"'):
+      return content[1:-1]
+    else:
       return int(content)
-    except ValueError:
-      return content
