@@ -6,6 +6,12 @@ from elohim import __version__
 
 setup(
     name='elohim',
+    description='',
+    long_description=open('README').read(),
+    author='Wezegege',
+    author_email='wezegege@live.fr',
+    classifiers=list(),
+    keywords=list(),
     version=__version__,
     packages=find_packages(),
     test_suite="nose.collector",
