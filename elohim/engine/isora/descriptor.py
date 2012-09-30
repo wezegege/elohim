@@ -3,7 +3,7 @@
 
 from functools import wraps
 from pyparsing import (Literal, Keyword, Word, Combine, printables,
-    And, alphanums, OneOrMore, Suppress, MatchFirst, Or)
+    And, alphanums, OneOrMore, Suppress, MatchFirst, Or, Optional)
 
 from elohim.engine.isora.parser import Parameter
 
@@ -17,10 +17,10 @@ class Descriptor(object):
   def get_parser(self):
     """
     >>> class Test(object):
-    ...   def __init__(self, source, value):
-    ...     self.result = {'source' : source, 'value' : value}
+    ...   def __init__(self, **kwargs):
+    ...     self.result = kwargs
     ...   def __repr__(self):
-    ...     return "Test(source = {source}, value = {value})".format(**self.result)
+    ...     return "Test({})".format(self.result)
     >>> desc = Descriptor(Test)
     >>> desc.phrases = ['If {source} = {value}']
     >>> desc.parameters = {
@@ -29,7 +29,7 @@ class Descriptor(object):
     ...     }
     >>> parser = desc.get_parser()
     >>> parser.parseString("If player's score = 100")
-    ([Test(source = player::score, value = 100)], {})
+    ([Test({'source': 'player::score', 'value': 100})], {})
     """
     def handle_variable(source, location, tokens):
       assert len(tokens) == 1
@@ -37,7 +37,8 @@ class Descriptor(object):
       assert name in self.parameters
       var_type, args = self.parameters[name]
       assert var_type in Parameter.types
-      parser = Parameter.types[var_type](*args).setResultsName(name)
+      parser = Parameter.types[var_type](*args)
+      parser.addParseAction(lambda s, l, t : (name, t[0]))
       return parser
 
     def handle_keyword(source, location, tokens):
@@ -45,9 +46,14 @@ class Descriptor(object):
       return Keyword(tokens[0]).suppress()
 
     def handle_phrase(source, location, tokens):
-      def create_action(source, location, tokens):
-        return self.cls(*tokens)
-      return And(tokens).setParseAction(create_action)
+      return And(tokens)
+
+    def create_action(source, location, tokens):
+      result = dict(((name, value) for name, value in tokens))
+      return self.cls(**result)
+
+    def handle_message(source, location, tokens):
+      return 'message', tokens[0]
 
     variable = Combine(Suppress('{') +
         Word(alphanums + '-_') +
@@ -55,9 +61,14 @@ class Descriptor(object):
     variable.setParseAction(handle_variable)
     word = Word(printables).setParseAction(handle_keyword)
     parser = OneOrMore(MatchFirst([variable, word])).setParseAction(handle_phrase)
-    result = [parser.parseString(phrase) for phrase in self.phrases]
-    result = [tokens[0] for tokens in result]
-    result = Or(result)
+    result = list()
+
+    for phrase in self.phrases:
+      sample = parser.parseString(phrase)[0]
+      sample = sample + Optional(Combine(Suppress('(') + Word(alphanums + '-_') +
+          Suppress(')')).setParseAction(handle_message))
+      result.append(sample)
+    result = Or(result).setParseAction(create_action)
     return result
 
 def descriptor_decorator(func):
