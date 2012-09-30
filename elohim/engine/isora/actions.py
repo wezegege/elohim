@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pokertemplate.engine.isora.var_types import types
+from elohim.engine.isora.var_types import types
 
 class Descriptor(object):
 

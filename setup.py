@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
-from pokertemplate import __version__
+from elohim import __version__
 
 setup(
-    name='PokerTemplate',
+    name='elohim',
     version=__version__,
     description='',
     author='',
     author_email='',
     packages=find_packages(),
+    extra_require={
+        'isora' : ['pyparsing'],
+        },
     )
