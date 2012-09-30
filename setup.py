@@ -7,11 +7,10 @@ from elohim import __version__
 setup(
     name='elohim',
     version=__version__,
-    description='',
-    author='',
-    author_email='',
     packages=find_packages(),
-    extra_require={
+    test_suite="nose.collector",
+    tests_require=['nose', 'coverage'],
+    extras_require={
         'isora' : ['pyparsing'],
         },
     )
