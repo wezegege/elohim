@@ -5,7 +5,7 @@ from functools import wraps
 
 class Descriptor(object):
   def __init__(self, cls):
-    self.phrase = ''
+    self.phrases = list()
     self.parameters = dict()
     self.blocks = dict()
     self.cls = cls
@@ -22,9 +22,16 @@ def descriptor_decorator(func):
   return decorator_func
 
 def describe(phrase):
+  """
+  >>> @describe('If {source} {operator} {destination}')
+  ... class Action(object):
+  ...   pass
+  >>> Action.descriptor.phrases
+  ['If {source} {operator} {destination}']
+  """
   @descriptor_decorator
   def desc_func(cls):
-    cls.descriptor.phrase = phrase
+    cls.descriptor.phrases.append(phrase)
     return cls
   return desc_func
 
