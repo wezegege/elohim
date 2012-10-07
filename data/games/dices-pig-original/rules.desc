@@ -9,8 +9,9 @@ This game is in categories "dices", "gambling"
 The rules are :
   For each player until someone's permanent score >= 100 (player-turn)
     While it is player's turn
-      Ask for player's choice between roll and hold
-      If player's choice is roll
+      Ask for :
+        - move as a choice between "hold", "roll"
+      If player's move is "roll"
       Then
         Roll a d6 (roll)
         If player's dice's roll = 1
