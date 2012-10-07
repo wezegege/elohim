@@ -1,1 +1,5 @@
 urwid
+pysfml
+coverage
+nose
+pyparsing

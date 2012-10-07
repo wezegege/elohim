@@ -8,11 +8,17 @@ from pyparsing import (Literal, Keyword, Word, Combine, printables,
 from elohim.engine.isora.parser import Parameter
 
 class Descriptor(object):
-  def __init__(self, cls):
-    self.phrases = list()
-    self.parameters = dict()
-    self.blocks = dict()
+  """
+  """
+
+  descriptors = list()
+
+  def __init__(self, cls, **kwargs):
     self.cls = cls
+    self.phrases = kwargs.get('phrases', list())
+    self.parameters = kwargs.get('parameters', dict())
+    self.blocks = kwargs.get('blocks', dict())
+    self.descriptors.append(self)
 
   def get_parser(self):
     """

@@ -15,7 +15,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     test_suite="nose.collector",
-    tests_require=['nose', 'coverage'],
+    tests_require=['nose', 'coverage', 'mock'],
     extras_require={
         'isora' : ['pyparsing'],
         },
