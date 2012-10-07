@@ -80,3 +80,6 @@ class Action(Entity):
 
 class Metadata(Entity):
   pass
+
+class Message(Entity):
+  pass
