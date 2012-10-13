@@ -11,7 +11,9 @@ class EntityMcls(type):
     mcls.types[name.lower()] = result
     return result
 
-Entity = EntityMcls('Entity', (object,), {})
+class Entity(EntityMcls('EntityBase', (object,), {})):
+  def __init__(self, env):
+    self.env = env
 
 ##################################################################
 # Basic types
@@ -49,6 +51,7 @@ class Type(Entity):
 # Containers
 ##################################################################
 
+@param('type', Type())
 class List(Entity):
   pass
 
@@ -60,23 +63,56 @@ class Tuple(Entity):
 ##################################################################
 
 class Condition(Entity):
-  pass
+  def applies(self):
+    return True
 
-class And(Entity):
-  pass
+@param('conditions', List(Condition()))
+class And(Condition):
+  def applies(self):
+    return all(condition.applies() for condition in self.params['conditions'])
 
-class Or(Entity):
-  pass
+@param('conditions', List(Condition()))
+class Or(Condition):
+  def applies(self):
+    return any(condition.applies() for condition in self.params['conditions'])
 
+@param('condition', Condition())
+class Not(Condition):
+  def appliers(self):
+    return not self.params['condition'].applies()
+
+@param('source', Entity())
+@param('destination', Entity())
+@param('operator', Operator())
+class Comparison(Condition):
+  def applies(self):
+    return self.params['operator'].compute(
+        self.params['source'],
+        self.params['destination'])
+
+@param('value', String())
 class Operator(Entity):
-  pass
+  def compute(self, source, destination):
+    return False
 
 ##################################################################
 # Statements
 ##################################################################
 
 class Action(Entity):
-  pass
+  def run(self):
+    self.env.pause.wait()
+    self.play()
+
+  def settings(self):
+    return dict(((name, value.settings())
+        for name, value in self.parameters))
+
+  def state(self):
+    return None
+
+  def load_state(self, _state):
+    pass
 
 class Metadata(Entity):
   pass

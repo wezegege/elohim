@@ -41,7 +41,7 @@ class If(Action):
   name = 'if'
 
   def play(self):
-    result = 'then' if  self.params['condition'].applies() else 'else'
+    result = 'then' if self.params['condition'].applies() else 'else'
     for action in self.params[result]:
       action.play()
 
