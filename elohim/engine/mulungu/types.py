@@ -130,7 +130,9 @@ class Operator(Entity):
 
 class Action(Entity):
   def run(self):
+    self.env.pause.acquire()
     self.env.pause.wait()
+    self.env.pause.release()
     self.play()
 
 
