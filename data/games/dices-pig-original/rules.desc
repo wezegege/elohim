@@ -8,19 +8,19 @@ This game is in categories "dices", "gambling"
 
 The rules are :
   For each player until someone's permanent score >= 100 (player-turn)
-    While it is player's turn
+    While it is current player's turn
       Ask for :
         - move as a choice between "hold", "roll"
-      If player's move is "roll"
+      If current player's move is "roll"
       Then
         Roll a d6 (roll)
         If player's dice roll = 1
           Then
-            Reset player's temporary score (reset)
+            Reset current player's temporary score (reset)
             End turn
           Else
-            Add player's dice's roll to player's temporary score (add)
+            Add current player's dice's roll to current player's temporary score (add)
       Else
-        Transfer player's temporary score to player's permanent score (hold)
-        End turn
+        Transfer current player's temporary score to current player's permanent score (hold)
+        End current player's turn
   Winner is the one with the best permanent score (end-game)

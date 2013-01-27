@@ -14,49 +14,78 @@ class EntityMcls(type):
 class Entity(EntityMcls('EntityBase', (object,), {})):
   def __init__(self, env):
     self.env = env
+    self.params = dict()
+    self.settings = dict()
+    self.state = dict()
+
+  def __getitem__(self, name):
+    for data in ('params', 'settings', 'state'):
+      if name in getattr(self, data):
+        return getattr(self, data)[name]
+    raise KeyError()
 
 ##################################################################
 # Basic types
 ##################################################################
 
-class Integer(Entity):
+class Type(Entity):
   pass
 
-class Number(Entity):
+class Integer(Type):
   pass
 
-class Version(Entity):
+class Number(Type):
   pass
 
-class String(Entity):
+class Version(Type):
   pass
 
-class Boolean(Entity):
+class String(Type):
+  pass
+
+class Boolean(Type):
+  pass
+
+class Enum(Type):
   pass
 
 ##################################################################
 # Advanced types
 ##################################################################
 
-class Variable(Entity):
+class Variable(Type):
   pass
 
-class Enum(Entity):
-  pass
-
-class Type(Entity):
-  pass
+@param('index', Variable())
+class Pointer(Type):
+  @property
+  def value(self):
+    return self['index'].value
 
 ##################################################################
 # Containers
 ##################################################################
 
 @param('type', Type())
-class List(Entity):
+class List(Type):
   pass
 
-class Tuple(Entity):
+class Dictionnary(Type):
   pass
+
+class Tuple(Type):
+  pass
+
+@param('list', Variable())
+@param('unwanted', Variable())
+class OtherIterator(Type):
+  @property
+  def value(self):
+    unwanted = self['unwanted']
+    iterator = self['list']
+    for index in range(len(iterator)):
+        if index != unwanted:
+        yield iterator[index]
 
 ##################################################################
 # Comparison
@@ -69,26 +98,26 @@ class Condition(Entity):
 @param('conditions', List(Condition()))
 class And(Condition):
   def applies(self):
-    return all(condition.applies() for condition in self.params['conditions'])
+    return all(condition.applies() for condition in self['conditions'])
 
 @param('conditions', List(Condition()))
 class Or(Condition):
   def applies(self):
-    return any(condition.applies() for condition in self.params['conditions'])
+    return any(condition.applies() for condition in self['conditions'])
 
 @param('condition', Condition())
 class Not(Condition):
   def appliers(self):
-    return not self.params['condition'].applies()
+    return not self['condition'].applies()
 
 @param('source', Entity())
 @param('destination', Entity())
 @param('operator', Operator())
 class Comparison(Condition):
   def applies(self):
-    return self.params['operator'].compute(
-        self.params['source'],
-        self.params['destination'])
+    return self['operator'].compute(
+        self['source'],
+        self['destination'])
 
 @param('value', String())
 class Operator(Entity):
@@ -101,8 +130,11 @@ class Operator(Entity):
 
 class Action(Entity):
   def run(self):
+    self.env.pause.acquire()
     self.env.pause.wait()
+    self.env.pause.release()
     self.play()
+
 
   def settings(self):
     return dict(((name, value.settings())
