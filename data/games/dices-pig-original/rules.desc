@@ -14,7 +14,7 @@ The rules are :
       If player's move is "roll"
       Then
         Roll a d6 (roll)
-        If player's dice's roll = 1
+        If player's dice roll = 1
           Then
             Reset player's temporary score (reset)
             End turn
