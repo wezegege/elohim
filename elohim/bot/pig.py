@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine.data import Data
+from elohim.bot.utils import value_iteration
 
 import os.path
+import math
+import random
 
 
 class RandomBot(object):
@@ -32,18 +35,22 @@ class TurnTotalBot(RandomBot):
 
 
 class PigBot(RandomBot):
-    def __init__(self, dice=6, goal=100, wrong=1):
-        self.dice=dice
-        self.goal=goal
-        self.wrong=wrong
-        self.filename = 'd{dice}w{wrong}g{goal}.txt'.format(dice=dice, goal=goal, wrong=wrong)
+    def __init__(self, dice=6, goal=100, wrong=None):
+        self.dice = dice
+        self.goal = goal
+        self.wrong = [1] if wrong is None else wrong
+        self.filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(dice=dice, goal=goal, wrong='-'.join(str(value) for value in self.wrong))
         self.filename = os.path.join(
                 os.path.dirname(__file__),
+                'data',
                 self.filename)
         self.todo = list()
-        with open(self.filename, 'r') as content:
-            for line in content:
-                self.todo.append([int(value) for value in line.split('\t')])
+        try:
+            with open(self.filename, 'r') as content:
+                for line in content:
+                    self.todo.append([int(value) for value in line.split('\t')])
+        except FileNotFoundError:
+            pass
 
     def askplayer(self, destination, options):
         current = Data.get(['players', 'current'])
@@ -61,10 +68,7 @@ class PigBot(RandomBot):
         Data.set(['players', 'current'] + destination, result)
 
     def optimal(self, epsilon=10**-9):
-        p = [[[0.0] * self.goal for a in range(self.goal)] for b in range(self.goal)]
-        do_roll = [[[False] * self.goal for a in range(self.goal)] for b in range(self.goal)]
-
-        def pwin(i, j, k):
+        def pwin(p, i, j, k):
             if i + k >= self.goal:
                 return 1.0
             elif j >= self.goal:
@@ -72,30 +76,25 @@ class PigBot(RandomBot):
             else:
                 return p[i][j][k]
 
-        iterations = 0
-        max_change = 1.0
-        diffs = self.goal ** 3
-        while max_change > epsilon:
-            old_roll = copy.deepcopy(do_roll)
-            iterations += 1
-            max_change = 0.0
-            for i in range(self.goal):
-                for j in range(self.goal):
-                    for k in range(self.goal - i):
-                        old_prob = p[i][j][k]
-                        roll = 0.0
-                        for value in range(1, self.dice + 1):
-                            if value == self.wrong:
-                                roll += (1.0 - pwin(j, i, 0))
-                            else:
-                                roll += pwin(i, j, k + value)
-                        roll /= self.dice
-                        hold = 1 - pwin(j, i + k, 0)
-                        p[i][j][k] = max(roll, hold)
-                        do_roll[i][j][k] = (roll > hold)
-                        change = math.fabs(p[i][j][k] - old_prob)
-                        max_change = max(max_change, change)
-            diffs = sum(1 for a in range(self.goal) for b in range(self.goal) for c in range(self.goal - a) if do_roll[a][b][c] != old_roll[a][b][c])
+        def action_probs(indexes, p):
+            roll = 0.0
+            i, j, k = indexes
+            for value in range(1, self.dice + 1):
+                if value in self.wrong:
+                    roll += (1.0 - pwin(p, j, i, 0))
+                else:
+                    roll += pwin(p, i, j, k + value)
+            roll /= self.dice
+            return [
+                    (True, roll),
+                    (False, 1 - pwin(p, j, i + k, 0)),
+                    ]
+
+        values = value_iteration([
+            lambda : self.goal,
+            lambda i : self.goal,
+            lambda i, j : self.goal - i,
+            ], epsilon, action_probs, True)
 
         result = list()
 
@@ -103,11 +102,9 @@ class PigBot(RandomBot):
             result.append(list())
             for j in range(self.goal):
                 try:
-                    todo = min(k for k in range(self.goal) if not do_roll[i][j][k])
+                    todo = min(k for k in range(self.goal) if not values[i][j][k])
                     result[i].append(todo)
                 except ValueError:
                     result[i].append(self.goal)
 
-        with open(self.filename, 'w') as save:
-            save.write('\n'.join('\t'.join(str(value) for value in line) for line in result))
-
+        return result
