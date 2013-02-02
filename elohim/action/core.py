@@ -2,8 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine.data import Data
+from elohim.action import GameFabric
 
 
+library = GameFabric.make_library('core')
+
+
+@library('set-winner')
 class SetWinner(object):
     def __init__(self, criteria):
         self.criteria = criteria
@@ -22,6 +27,7 @@ class SetWinner(object):
             player['client'].send('winner', name=name)
 
 
+@library('if')
 class If(object):
     def __init__(self, condition, iftrue, iffalse=None):
         self.condition = condition
@@ -42,7 +48,7 @@ class If(object):
             for action in self.iffalse:
                 action.play()
 
-
+@library('foreach-while')
 class ForeachWhile(object):
     def __init__(self, condition, actions):
         self.condition = condition
@@ -67,6 +73,7 @@ class ForeachWhile(object):
                 action.play()
 
 
+@library('sequence')
 class Sequence(object):
     def __init__(self, actions):
         self.actions = actions

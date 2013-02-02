@@ -5,23 +5,23 @@
   'categories' : ['dices', 'gambling'],
   'rules' : [
   {
-    'rule' : 'input:foreach-player-until',
-    'message' : 'player-turn',
+    'rule' : 'core:foreach-while',
     'comparison' : {
-      'source' : 'player::score::permanent',
+      'source' : ':score:permanent',
       'comparison' : 'greater-equal',
       'value' : 100,
     },
     'actions' : {
-      'rule' : 'input:while',
-      'comparison' : {
-        'source' : 'player::turn',
-        'value' : true,
+      'rule' : 'data:while-current-true',
+      'variable' : 'player:turn',
       },
       'actions' : [{
         'rule' : 'input:ask-player',
-        'source' : 'player::choice',
-        'values' : ['roll', 'hold'],
+        'destination' : 'move',
+        'options' : {
+          'roll' : 'Roll dice',
+          'hold' : 'Hold points',
+        },
       }
       {
         'rule' : 'core:if',

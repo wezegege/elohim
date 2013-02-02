@@ -2,8 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine.data import Data
+from elohim.action import GameFabric
 
 
+library = GameFabric.make_library('data')
+
+
+@library('transfer-current')
 class TransferCurrent(object):
     def __init__(self, origin, destination, reset=0):
         self.origin = origin
@@ -19,6 +24,7 @@ class TransferCurrent(object):
         Data.set(['players', 'current'] + self.origin, self.reset)
 
 
+@library('set-current')
 class SetCurrent(object):
     def __init__(self, variable, value):
         self.variable = variable
@@ -31,6 +37,7 @@ class SetCurrent(object):
         Data.set(['players', 'current'] + self.variable, self.value)
 
 
+@library('while-current-true')
 class WhileCurrentTrue(object):
     def __init__(self, variable, actions):
         self.variable = variable

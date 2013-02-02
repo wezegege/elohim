@@ -12,49 +12,49 @@ from elohim.action.pig import AboveCondition, MoveCondition, DiceCondition, Play
 
 
 game = Sequence(actions = [
-        ForeachWhile(condition=PlayerCondition(),
+    ForeachWhile(condition=PlayerCondition(),
+            actions=[
+        WhileCurrentTrue(variable=['turn'],
                 actions=[
-            WhileCurrentTrue(variable=['turn'],
-                    actions=[
-                AskPlayer(destination=['move'],
-                    options={'hold' : 'Hold points', 'roll' : 'Roll a dice',}),
-                If(condition=MoveCondition(),
-                    iftrue=[
-                        RollDiceCurrent(destination=['roll', 'dice'], size=6),
-                        If(condition=DiceCondition(),
-                            iftrue=[
-                                SetCurrent(variable=['score', 'temporary'], value=0),
-                                SetCurrent(variable=['turn'], value=False),
-                                ],
-                            iffalse=[
-                                TransferCurrent(origin=['roll', 'dice'],
-                                    destination=['score', 'temporary'],
-                                    reset=0),
-                                If(condition=AboveCondition(),
-                                    iftrue=[
-                                        TransferCurrent(origin=['score', 'temporary'],
-                                            destination=['score', 'permanent'],
-                                            reset=0),
-                                        SetCurrent(variable=['turn'], value=False),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    iffalse=[
-                        TransferCurrent(origin=['score', 'temporary'],
-                            destination=['score', 'permanent'],
-                            reset=0),
-                        SetCurrent(variable=['turn'], value=False),
-                        ],
-                    ),
-                ],
-                    ),
+            AskPlayer(destination=['move'],
+                options={'hold' : 'Hold points', 'roll' : 'Roll a dice',}),
+            If(condition=MoveCondition(),
+                iftrue=[
+                    RollDiceCurrent(destination=['roll', 'dice'], size=6),
+                    If(condition=DiceCondition(),
+                        iftrue=[
+                            SetCurrent(variable=['score', 'temporary'], value=0),
+                            SetCurrent(variable=['turn'], value=False),
+                            ],
+                        iffalse=[
+                            TransferCurrent(origin=['roll', 'dice'],
+                                destination=['score', 'temporary'],
+                                reset=0),
+                            If(condition=AboveCondition(),
+                                iftrue=[
+                                    TransferCurrent(origin=['score', 'temporary'],
+                                        destination=['score', 'permanent'],
+                                        reset=0),
+                                    SetCurrent(variable=['turn'], value=False),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                iffalse=[
+                    TransferCurrent(origin=['score', 'temporary'],
+                        destination=['score', 'permanent'],
+                        reset=0),
+                    SetCurrent(variable=['turn'], value=False),
+                    ],
+                ),
             ],
                 ),
-        SetWinner(criteria=['score', 'permanent']),
-        ]
-        )
+        ],
+            ),
+    SetWinner(criteria=['score', 'permanent']),
+    ]
+    )
 
 
 Data.init(game.player_data())
