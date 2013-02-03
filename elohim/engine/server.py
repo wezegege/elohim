@@ -4,8 +4,6 @@
 from elohim.engine.data import Data
 from elohim.action import Entity
 
-import json
-
 class Server(object):
     def __init__(self, rules, defaults):
         self.rules = rules
@@ -20,17 +18,15 @@ class Server(object):
     def play(self):
         self.rules.play()
 
-    def to_json(self):
+    def to_dict(self):
         metadata = {
                 'defaults' : self.data.defaults,
                 'rules' : self.rules.to_dict(),
                 }
-        print(json.dumps(metadata, sort_keys=True, indent=4))
+        return metadata
 
     @classmethod
-    def from_json(cls, filename):
-        with open(filename, 'r') as content:
-            gamedata = json.load(content)
+    def from_dict(cls, gamedata):
         rules = Entity.from_dict(gamedata['rules'])
         return cls(rules=rules, defaults=gamedata['defaults'])
 
