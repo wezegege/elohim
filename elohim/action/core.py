@@ -1,89 +1,78 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
-from elohim.action import GameFabric
+from elohim.action import Action
 
 
-library = GameFabric.make_library('core')
-
-
-@library('set-winner')
-class SetWinner(object):
-    def __init__(self, criteria):
-        self.criteria = criteria
-
-    def player_data(self):
-        return [(self.criteria, 0)]
+class SetWinner(Action):
+    library = 'core'
+    name = 'set-winner'
+    parameters = [
+        ('criteria', 'player_data'),
+        ]
 
     def play(self):
         name = None
         score = None
-        for player in Data.get(['players', 'list']):
-            if score is None or score < player['score']['permanent']:
-                score = player['score']['permanent']
+        for player in self.data.get(['players', 'list']):
+            if score is None or \
+                    score < self.data.get(self.values['criteria'], player):
+                score = self.data.get(self.values['criteria'], player)
                 name = player['name']
-        for player in Data.get(['players', 'list']):
+        for player in self.data.get(['players', 'list']):
             player['client'].send('winner', name=name)
 
 
-@library('if')
-class If(object):
-    def __init__(self, condition, iftrue, iffalse=None):
-        self.condition = condition
-        self.iftrue = iftrue
-        self.iffalse = list() if iffalse is None else iffalse
-
-    def player_data(self):
-        result = self.condition.player_data()
-        for action in self.iftrue + self.iffalse:
-            result.extend(action.player_data())
-        return result
+class If(Action):
+    library = 'core'
+    name = 'if'
+    parameters = [
+        ('condition', 'condition'),
+        ('iftrue', 'actions'),
+        ('iffalse', 'actions'),
+        ]
 
     def play(self):
-        if self.condition.evaluate():
-            for action in self.iftrue:
+        if self.values['condition'].evaluate():
+            for action in self.values['iftrue']:
                 action.play()
         else:
-            for action in self.iffalse:
+            for action in self.values['iffalse']:
                 action.play()
 
-@library('foreach-while')
-class ForeachWhile(object):
-    def __init__(self, condition, actions):
-        self.condition = condition
-        self.actions = actions
 
-    def player_data(self):
-        result = self.condition.player_data()
-        for action in self.actions:
-            result.extend(action.player_data())
-        return result
+class ForeachWhile(Action):
+    library = 'core'
+    name = 'foreach-while'
+    parameters = [
+        ('condition', 'condition'),
+        ('actions', 'actions'),
+        ]
 
     def play(self):
-        while self.condition.evaluate():
+        while self.values['condition'].evaluate():
             while True:
-                Data.set(['players', 'index'], (Data.get(['players', 'index']) + 1) % Data.get(['players', 'count']))
-                if Data.get(['players', 'list', Data.get(['players', 'index']), 'ingame']):
+                self.data.set(['players', 'index'],
+                        (self.data.get(['players', 'index']) + 1) %
+                        self.data.get(['players', 'count']))
+                if self.data.get(['players', 'list',
+                        self.data.get(['players', 'index']), 'ingame']):
                     break
-            Data.set(['players', 'current'], Data.get(['players', 'list', Data.get(['players', 'index'])]))
+            self.data.set(['players', 'current'],
+                    self.data.get(['players', 'list', self.data.get(['players', 'index'])]))
 
-            Data.get(['players', 'current', 'client']).send('playerturn')
-            for action in self.actions:
+            self.data.get(['players', 'current', 'client']).send('playerturn')
+            for action in self.values['actions']:
                 action.play()
 
 
-@library('sequence')
-class Sequence(object):
-    def __init__(self, actions):
-        self.actions = actions
-
-    def player_data(self):
-        result = list()
-        for action in self.actions:
-            result.extend(action.player_data())
-        return result
+class Sequence(Action):
+    library = 'core'
+    name = 'sequence'
+    parameters = [
+            ('actions', 'actions'),
+            ]
 
     def play(self):
-        for action in self.actions:
+        for action in self.values['actions']:
             action.play()

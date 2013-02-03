@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
+from elohim.action import Action
 
 
-class AskPlayer(object):
-    def __init__(self, destination, options):
-        self.destination = destination
-        self.options = options
-
-    def player_data(self):
-        return [(self.destination, '')]
+class AskPlayer(Action):
+    library = 'input'
+    name = 'ask-player'
+    parameters = [
+            ('destination', 'player_data'),
+            ('options', 'value'),
+            ]
 
     def play(self):
-        Data.get(['players', 'current', 'client']).send('askcurrent', destination=self.destination, options=self.options)
+        self.data.get(['players', 'current', 'client']).send(
+                'askcurrent',
+                destination=self.values['destination'],
+                options=self.values['options'])

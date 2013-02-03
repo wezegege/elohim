@@ -1,57 +1,47 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
-from elohim.action import GameFabric
+from elohim.action import Action
 
 
-library = GameFabric.make_library('data')
-
-
-@library('transfer-current')
-class TransferCurrent(object):
-    def __init__(self, origin, destination, reset=0):
-        self.origin = origin
-        self.destination = destination
-        self.reset = reset
-
-    def player_data(self):
-        return [(self.origin, self.reset),
-                (self.destination, self.reset)]
+class TransferCurrent(Action):
+    library = 'data'
+    name = 'tranfer-current'
+    parameters = [
+            ('origin', 'player_data'),
+            ('destination', 'player_data'),
+            ]
 
     def play(self):
-        Data.add(['players', 'current'] + self.destination, Data.get(['players', 'current'] + self.origin))
-        Data.set(['players', 'current'] + self.origin, self.reset)
+        self.data.add(['players', 'current'] + self.values['destination'],
+                self.data.get(['players', 'current'] + self.values['origin']))
+        self.data.set(['players', 'current'] + self.values['origin'], 0)
 
 
-@library('set-current')
-class SetCurrent(object):
-    def __init__(self, variable, value):
-        self.variable = variable
-        self.value = value
-
-    def player_data(self):
-        return [(self.variable, None)]
-
-    def play(self):
-        Data.set(['players', 'current'] + self.variable, self.value)
-
-
-@library('while-current-true')
-class WhileCurrentTrue(object):
-    def __init__(self, variable, actions):
-        self.variable = variable
-        self.actions = actions
-
-    def player_data(self):
-        result = [(self.variable, False)]
-        for action in self.actions:
-            result.extend(action.player_data())
-        return result
+class SetCurrent(Action):
+    library = 'data'
+    name = 'set-current'
+    parameters = [
+            ('variable', 'player_data'),
+            ('value', 'value'),
+            ]
 
     def play(self):
-        Data.set(['players', 'current'] + self.variable, True)
-        while Data.get(['players', 'current'] + self.variable):
-            Data.get(['players', 'current', 'client']).send('round')
-            for action in self.actions:
+        self.data.set(['players', 'current'] + self.values['variable'],
+                self.values['value'])
+
+
+class WhileCurrentTrue(Action):
+    library = 'data'
+    name = 'while-current-true'
+    parameters = [
+            ('variable', 'player_data'),
+            ('actions', 'actions'),
+            ]
+
+    def play(self):
+        self.data.set(['players', 'current'] + self.values['variable'], True)
+        while self.data.get(['players', 'current'] + self.values['variable']):
+            self.data.get(['players', 'current', 'client']).send('round')
+            for action in self.values['actions']:
                 action.play()
