@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import copy
-import math
-import sys
-import os.path
-
 from elohim.bot.pig import RandomBot
 from elohim.bot.utils import value_iteration, dice_probability
+
+import os.path
 
 
 class HogBot(RandomBot):

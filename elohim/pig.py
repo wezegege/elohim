@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
 from elohim.bot.pig import RandomBot, TurnTotalBot, PigBot
 from elohim.client.basic_console import ConsolePlayer
+
 from elohim.action.core import SetWinner, If, ForeachWhile, Sequence
 from elohim.action.data import TransferCurrent, SetCurrent, WhileCurrentTrue
 from elohim.action.input import AskPlayer
 from elohim.action.random import RollDiceCurrent
 from elohim.action.pig import AboveCondition, MoveCondition, DiceCondition, PlayerCondition
+
+from elohim.engine.server import Server
 
 
 game = Sequence(actions = [
@@ -57,9 +59,7 @@ game = Sequence(actions = [
     )
 
 
-Data.init(game.player_data())
-
-Data.add_player('Player', ConsolePlayer())
-Data.add_player('Bot', PigBot())
-
-game.play()
+server = Server(game)
+server.add_player('Player', ConsolePlayer())
+server.add_player('Bot', PigBot())
+server.play()

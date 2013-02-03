@@ -5,7 +5,6 @@ from elohim.engine.data import Data
 from elohim.bot.utils import value_iteration
 
 import os.path
-import math
 import random
 
 
