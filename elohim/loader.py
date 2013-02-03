@@ -37,5 +37,5 @@ server.add_player('Bot', PigBot())
 
 try:
     server.play()
-except KeyboardInterrupt, EOFError:
+except (KeyboardInterrupt, EOFError):
     print('Game stopped by user')

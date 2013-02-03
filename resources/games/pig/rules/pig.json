@@ -40,9 +40,7 @@
                     {
                         "actions": [
                             {
-                                "destination": [
-                                    "move"
-                                ], 
+                                "destination": "move", 
                                 "library": "input", 
                                 "name": "ask-player", 
                                 "options": {
@@ -56,9 +54,7 @@
                                         {
                                             "library": "core", 
                                             "name": "player-variable", 
-                                            "variable": [
-                                                "move"
-                                            ]
+                                            "variable": "move"
                                         }, 
                                         {
                                             "library": "core", 
@@ -71,76 +67,51 @@
                                 }, 
                                 "iffalse": [
                                     {
-                                        "destination": [
-                                            "score", 
-                                            "permanent"
-                                        ], 
+                                        "destination": "score::permanent", 
                                         "library": "data", 
                                         "name": "tranfer-current", 
-                                        "origin": [
-                                            "score", 
-                                            "temporary"
-                                        ]
+                                        "origin": "score::temporary"
                                     }, 
                                     {
                                         "library": "data", 
                                         "name": "set-current", 
                                         "value": false, 
-                                        "variable": [
-                                            "turn"
-                                        ]
+                                        "variable": "turn"
                                     }
                                 ], 
                                 "iftrue": [
                                     {
-                                        "destination": [
-                                            "roll", 
-                                            "dice"
-                                        ], 
+                                        "destination": "roll::dice", 
                                         "library": "random", 
                                         "name": "roll-dice-current", 
                                         "size": {
                                             "library": "core",
                                             "name": "variable",
-                                            "variable": [
-                                                "dice",
-                                                "size"
-                                                ]
+                                            "variable": "dice::size"
                                         }
 
                                     }, 
                                     {
                                         "condition": {
-                                            "expressions": [
-                                                {
+                                            "element": {
                                                     "library": "core", 
                                                     "name": "player-variable", 
-                                                    "variable": [
-                                                        "roll", 
-                                                        "dice"
-                                                    ]
-                                                }, 
-                                                {
+                                                    "variable": "roll::dice"
+                                            }, 
+                                            "list": {
                                                     "library": "core", 
-                                                    "name": "value", 
-                                                    "value": 1
-                                                }
-                                            ], 
+                                                    "name": "variable", 
+                                                    "variable": "dice::wrong"
+                                            },
                                             "library": "core", 
-                                            "name": "equals"
+                                            "name": "in"
                                         }, 
                                         "iffalse": [
                                             {
-                                                "destination": [
-                                                    "score", 
-                                                    "temporary"
-                                                ], 
+                                                "destination": "score::temporary", 
                                                 "library": "data", 
                                                 "name": "tranfer-current", 
-                                                "origin": [
-                                                    "roll", 
-                                                    "dice"
-                                                ]
+                                                "origin": "roll::dice"
                                             }, 
                                             {
                                                 "condition": {
@@ -149,18 +120,12 @@
                                                             {
                                                                 "library": "core", 
                                                                 "name": "player-variable", 
-                                                                "variable": [
-                                                                    "score", 
-                                                                    "permanent"
-                                                                ]
+                                                                "variable": "score::permanent"
                                                             }, 
                                                             {
                                                                 "library": "core", 
                                                                 "name": "player-variable", 
-                                                                "variable": [
-                                                                    "score", 
-                                                                    "temporary"
-                                                                ]
+                                                                "variable": "score::temporary"
                                                             }
                                                         ], 
                                                         "library": "core", 
@@ -171,32 +136,22 @@
                                                     "right": {
                                                         "library": "core", 
                                                         "name": "variable",
-                                                        "variable": [
-                                                            "goal"
-                                                            ]
+                                                        "variable": "goal"
                                                     }
                                                 }, 
                                                 "iffalse": [], 
                                                 "iftrue": [
                                                     {
-                                                        "destination": [
-                                                            "score", 
-                                                            "permanent"
-                                                        ], 
+                                                        "destination": "score::permanent", 
                                                         "library": "data", 
                                                         "name": "tranfer-current", 
-                                                        "origin": [
-                                                            "score", 
-                                                            "temporary"
-                                                        ]
+                                                        "origin": "score::temporary"
                                                     }, 
                                                     {
                                                         "library": "data", 
                                                         "name": "set-current", 
                                                         "value": false, 
-                                                        "variable": [
-                                                            "turn"
-                                                        ]
+                                                        "variable": "turn"
                                                     }
                                                 ], 
                                                 "library": "core", 
@@ -208,18 +163,13 @@
                                                 "library": "data", 
                                                 "name": "set-current", 
                                                 "value": 0, 
-                                                "variable": [
-                                                    "score", 
-                                                    "temporary"
-                                                ]
+                                                "variable": "score::temporary"
                                             }, 
                                             {
                                                 "library": "data", 
                                                 "name": "set-current", 
                                                 "value": false, 
-                                                "variable": [
-                                                    "turn"
-                                                ]
+                                                "variable": "turn"
                                             }
                                         ], 
                                         "library": "core", 
@@ -232,9 +182,7 @@
                         ], 
                         "library": "data", 
                         "name": "while-current-true", 
-                        "variable": [
-                            "turn"
-                        ]
+                        "variable": "turn"
                     }
                 ], 
                 "condition": {
@@ -242,19 +190,14 @@
                         "left": {
                             "library": "core", 
                             "name": "variable",
-                            "variable": [
-                                "goal"
-                            ]
+                            "variable": "goal"
                         }, 
                         "library": "core", 
                         "name": "greater", 
                         "right": {
                             "library": "core", 
                             "name": "player-variable", 
-                            "variable": [
-                                "score", 
-                                "permanent"
-                            ]
+                            "variable": "score::permanent"
                         }
                     }, 
                     "library": "core", 
@@ -264,10 +207,7 @@
                 "name": "foreach-while"
             }, 
             {
-                "criteria": [
-                    "score", 
-                    "permanent"
-                ], 
+                "criteria": "score::permanent", 
                 "library": "core", 
                 "name": "set-winner"
             }

@@ -77,6 +77,8 @@ class Entity(object):
                 result[field] = [value.to_dict() for value in self.values[field]]
             elif field_type in ('condition', 'expression'):
                 result[field] = self.values[field].to_dict()
+            elif field_type in ('data', 'player_data'):
+                result[field] = '::'.join(self.alues[field])
             else:
                 result[field] = self.values[field]
         return result
@@ -95,8 +97,9 @@ class Entity(object):
                 rules[field] = [cls.from_dict(entity) for entity in rules[field]]
             elif field_type in ('condition', 'expression'):
                 rules[field] = cls.from_dict(rules[field])
+            elif field_type in ('player_data', 'data'):
+                rules[field] = rules[field].split('::')
         return entity(**rules)
-
 
     def represent(self, indent=1):
         indent_size = 2
@@ -120,6 +123,8 @@ class Entity(object):
                         )
             elif field_type in ('condition', 'expression'):
                 result += self.values[field].represent(indent=indent + 1)
+            elif field_type in ('data', 'player_data'):
+                result += '{value}\n'.format(value='::'.join(self.values[field]))
             else:
                 result += '{value}\n'.format(value=self.values[field])
         result += '{indent}}}\n'.format(indent=' ' * ((indent - 1) * indent_size))
