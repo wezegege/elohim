@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine.data import Data
-from elohim.bot.utils import value_iteration
+from elohim.bot.utils.markov import value_iteration
+from elohim.settings import DATAPATH
 
 import os.path
 import random
@@ -40,8 +41,10 @@ class PigBot(RandomBot):
         self.wrong = [1] if wrong is None else wrong
         self.filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(dice=dice, goal=goal, wrong='-'.join(str(value) for value in self.wrong))
         self.filename = os.path.join(
-                os.path.dirname(__file__),
-                'data',
+                DATAPATH,
+                'games',
+                'pig',
+                'bot',
                 self.filename)
         self.todo = list()
         try:

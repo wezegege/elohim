@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from elohim.bot.pig import RandomBot
-from elohim.bot.utils import value_iteration, dice_probability
+from elohim.bot.utils.markov import value_iteration
+from elohim.bot.utils.dices import dice_probability
+from elohim.settings import DATAPATH
 
 import os.path
 
@@ -16,8 +18,10 @@ class HogBot(RandomBot):
         self.filename = self.filename.format(dice=dice, goal=goal,
                 wrong='-'.join(str(value) for value in self.wrong))
         self.filename = os.path.join(
-                os.path.dirname(__file__),
-                'data',
+                DATAPATH,
+                'games',
+                'pig',
+                'bot',
                 self.filename)
         self.todo = list()
         try:
