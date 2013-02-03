@@ -5,9 +5,9 @@ from elohim.engine.data import Data
 from elohim.action import Entity
 
 class Server(object):
-    def __init__(self, rules, defaults):
+    def __init__(self, rules, defaults, settings):
         self.rules = rules
-        Data.init(rules.player_data(), defaults)
+        Data.init(rules.player_data(), defaults, settings)
         #self.data = Data(rules.player_data())
         self.data = Data
         self.rules.set_data(self.data)
@@ -19,8 +19,10 @@ class Server(object):
         self.rules.play()
 
     def to_dict(self):
+        defaults = {'::'.join(field) : value for field, value in self.data.defaults}
+        settings = {'::'.join(field) : value for field, value in self.data.settings}
         metadata = {
-                'defaults' : self.data.defaults,
+                'defaults' : defaults,
                 'rules' : self.rules.to_dict(),
                 }
         return metadata
@@ -28,5 +30,7 @@ class Server(object):
     @classmethod
     def from_dict(cls, gamedata):
         rules = Entity.from_dict(gamedata['rules'])
-        return cls(rules=rules, defaults=gamedata['defaults'])
+        defaults = [(field.split('::'), value) for field, value in gamedata['defaults'].items()]
+        settings = [(entry['name'].split('::'), entry['default']) for entry in gamedata['settings']]
+        return cls(rules=rules, defaults=defaults, settings=settings)
 

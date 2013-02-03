@@ -7,12 +7,15 @@ class Data(object):
     defaults = dict()
 
     @classmethod
-    def init(cls, variables=None, defaults=None):
+    def init(cls, variables=None, defaults=None, settings=None):
         cls.set(['players', 'list'], list())
         cls.set(['players', 'count'], 0)
         cls.set(['players', 'index'], -1)
         cls.player_data = list() if variables is None else variables
         cls.defaults = list() if defaults is None else defaults
+        cls.settings = list() if settings is None else settings
+        for field, value in cls.settings:
+            cls.set(field, value)
 
     @classmethod
     def add_player(cls, name, client):

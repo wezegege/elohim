@@ -3,14 +3,13 @@
 
 from elohim.bot.pig import RandomBot, TurnTotalBot, PigBot
 from elohim.client.basic_console import ConsolePlayer
+from elohim.settings import DATAPATH
 
 from elohim.engine.json_loader import from_json, json_files
 
 import os, os.path, sys
 
-datapath = os.path.join(os.getcwd(), 'data')
-
-rules = json_files(datapath)
+rules = json_files(DATAPATH)
 if not rules:
     print('No game found')
     sys.exit(0)
@@ -38,5 +37,5 @@ server.add_player('Bot', PigBot())
 
 try:
     server.play()
-except KeyboardInterrupt:
+except KeyboardInterrupt, EOFError:
     print('Game stopped by user')

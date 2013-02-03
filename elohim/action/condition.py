@@ -15,9 +15,20 @@ class Value(Expression):
         return self.values['value']
 
 
-class PlayerVariable(Expression):
+class Variable(Expression):
     library = 'core'
     name = 'variable'
+    parameters = [
+            ('variable', 'data'),
+            ]
+
+    def value(self, **kwargs):
+        return self.data.get(self.values['variable'])
+
+
+class PlayerVariable(Expression):
+    library = 'core'
+    name = 'player-variable'
     parameters = [
             ('variable', 'player_data'),
             ]
