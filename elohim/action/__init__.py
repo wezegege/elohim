@@ -10,28 +10,6 @@ class NonExistingEntity(Exception):
         super(NonExistingEntity, self).__init__(message)
 
 
-def default(field_type, args=None):
-    answers = {
-            'expression_list' : lambda : list(),
-            'expression' : lambda : Expression(),
-            'player_data' : lambda : list(),
-            'condition_list' : lambda : list(),
-            'condition' : lambda : Condition(),
-            'actions' : lambda : list(),
-            'value' : None,
-            'integer' : 0,
-            }
-    if args:
-        result = args[0]
-    elif field_type in answers:
-        result = answers[field_type]
-    else:
-        result = None
-    if hasattr(result, '__call__'):
-        result = result()
-    return result
-
-
 class Entity(object):
     type = 'entity'
     parameters = list()
@@ -44,28 +22,18 @@ class Entity(object):
             if field in kwargs:
                 self.values[field] = kwargs[field]
             else:
-                self.values[field] = default(field_type, args)
+                self.values[field] = field_type.default()
 
     def player_data(self):
         result = list()
         for field, field_type, *args in self.parameters:
-            if field_type in ('player_data',):
-                result.append(self.values[field])
-            elif field_type in ('expression', 'condition'):
-                result.extend(self.values[field].player_data())
-            elif field_type in ('expression_list', 'condition_list', 'actions'):
-                for entity in self.values[field]:
-                    result.extend(entity.player_data())
+            result.extend(field_type.player_data(self.values[field]))
         return result
 
     def set_data(self, data):
         self.data = data
         for field, field_type, *args in self.parameters:
-            if field_type in ('expression', 'condition'):
-                self.values[field].set_data(data)
-            elif field_type in ('expression_list', 'condition_list', 'actions'):
-                for entity in self.values[field]:
-                    entity.set_data(data)
+            field_type.set_data(self.values[field], data)
 
     def to_dict(self):
         result = {
@@ -73,14 +41,7 @@ class Entity(object):
                 'library' : self.library,
                 }
         for field, field_type in self.parameters:
-            if field_type in ('actions', 'condition_list', 'expression_list'):
-                result[field] = [value.to_dict() for value in self.values[field]]
-            elif field_type in ('condition', 'expression'):
-                result[field] = self.values[field].to_dict()
-            elif field_type in ('data', 'player_data'):
-                result[field] = '::'.join(self.alues[field])
-            else:
-                result[field] = self.values[field]
+            result[field] = field_type.to_dict(self.values[field])
         return result
 
     @classmethod
@@ -93,12 +54,7 @@ class Entity(object):
         del rules['library']
         del rules['name']
         for field, field_type in entity.parameters:
-            if field_type in ('actions', 'condition_list', 'expression_list'):
-                rules[field] = [cls.from_dict(entity) for entity in rules[field]]
-            elif field_type in ('condition', 'expression'):
-                rules[field] = cls.from_dict(rules[field])
-            elif field_type in ('player_data', 'data'):
-                rules[field] = rules[field].split('::')
+            rules[field] = field_type.from_dict(rules[field])
         return entity(**rules)
 
     def represent(self, indent=1):
@@ -112,21 +68,7 @@ class Entity(object):
                     indent=' ' * (indent * indent_size),
                     field=field,
                     field_type=field_type)
-            if field_type in ('actions', 'condition_list', 'expression_list'):
-                result += '[\n'
-                for value in self.values[field]:
-                    result += '{indent}{description}'.format(
-                            indent=' ' * ((indent + 1) * indent_size),
-                            description=value.represent(indent=indent + 2))
-                result += '{indent}]\n'.format(
-                        indent=' ' * ((indent) * indent_size)
-                        )
-            elif field_type in ('condition', 'expression'):
-                result += self.values[field].represent(indent=indent + 1)
-            elif field_type in ('data', 'player_data'):
-                result += '{value}\n'.format(value='::'.join(self.values[field]))
-            else:
-                result += '{value}\n'.format(value=self.values[field])
+            result += field_type.represent(self.values[field], indent + 1) 
         result += '{indent}}}\n'.format(indent=' ' * ((indent - 1) * indent_size))
         return result
 
@@ -152,8 +94,16 @@ class Entity(object):
         return result
 
 
+class Action(Entity):
+    library='action'
+    name='action'
+    type='action'
+
+    def play(self):
+        pass
+
 class Expression(Entity):
-    library='core'
+    library='expression'
     name='expression'
     type='expression'
 
@@ -162,18 +112,10 @@ class Expression(Entity):
 
 
 class Condition(Entity):
-    library='core'
+    library='condition'
     name='condition'
     type='condition'
 
     def evaluate(self, **kwargs):
         return True
 
-
-class Action(Entity):
-    library='core'
-    name='action'
-    type='action'
-
-    def play(self):
-        pass

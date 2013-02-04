@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from elohim.action import Action
+from elohim.action.parameter import PlayerData, ValueParameter
 
 
 class AskPlayer(Action):
     library = 'input'
     name = 'ask-player'
     parameters = [
-            ('destination', 'player_data'),
-            ('options', 'value'),
+            ('destination', PlayerData()),
+            ('options', ValueParameter()),
             ]
 
     def play(self):

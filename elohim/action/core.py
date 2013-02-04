@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from elohim.action import Action
+from elohim.action.parameter import PlayerData, ConditionParameter, ActionList
 
 
 class SetWinner(Action):
     library = 'core'
     name = 'set-winner'
     parameters = [
-        ('criteria', 'player_data'),
+        ('criteria', PlayerData()),
         ]
 
     def play(self):
@@ -27,9 +28,9 @@ class If(Action):
     library = 'core'
     name = 'if'
     parameters = [
-        ('condition', 'condition'),
-        ('iftrue', 'actions'),
-        ('iffalse', 'actions'),
+        ('condition', ConditionParameter()),
+        ('iftrue', ActionList()),
+        ('iffalse', ActionList()),
         ]
 
     def play(self):
@@ -45,8 +46,8 @@ class ForeachWhile(Action):
     library = 'core'
     name = 'foreach-while'
     parameters = [
-        ('condition', 'condition'),
-        ('actions', 'actions'),
+        ('condition', ConditionParameter()),
+        ('actions', ActionList()),
         ]
 
     def play(self):
@@ -70,7 +71,7 @@ class Sequence(Action):
     library = 'core'
     name = 'sequence'
     parameters = [
-            ('actions', 'actions'),
+            ('actions', ActionList()),
             ]
 
     def play(self):

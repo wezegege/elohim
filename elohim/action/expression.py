@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from elohim.action import Expression
+from elohim.action.parameter import ValueParameter, GlobalData, PlayerData, ExpressionList
 
 
 class Value(Expression):
-    library = 'core'
+    library = 'expression'
     name = 'value'
     parameters = [
-            ('value', 'value'),
+            ('value', ValueParameter()),
             ]
 
     def value(self, **kwargs):
@@ -16,10 +17,10 @@ class Value(Expression):
 
 
 class Variable(Expression):
-    library = 'core'
+    library = 'expression'
     name = 'variable'
     parameters = [
-            ('variable', 'data'),
+            ('variable', GlobalData()),
             ]
 
     def value(self, **kwargs):
@@ -27,10 +28,10 @@ class Variable(Expression):
 
 
 class PlayerVariable(Expression):
-    library = 'core'
+    library = 'expression'
     name = 'player-variable'
     parameters = [
-            ('variable', 'player_data'),
+            ('variable', PlayerData()),
             ]
 
     def value(self, **kwargs):
@@ -42,10 +43,10 @@ class PlayerVariable(Expression):
 
 
 class Sum(Expression):
-    library = 'core'
+    library = 'expression'
     name = 'sum'
     parameters = [
-            ('expressions', 'expression_list'),
+            ('expressions', ExpressionList()),
             ]
 
     def value(self, **kwargs):

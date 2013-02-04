@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from elohim.action import Action
+from elohim.action.parameter import PlayerData, ExpressionParameter
 
 import random
 
@@ -10,8 +11,8 @@ class RollDiceCurrent(Action):
     library = 'random'
     name = 'roll-dice-current'
     parameters = [
-            ('destination', 'player_data'),
-            ('size', 'expression'),
+            ('destination', PlayerData()),
+            ('size', ExpressionParameter()),
             ]
 
     def play(self):

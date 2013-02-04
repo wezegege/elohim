@@ -52,17 +52,17 @@
                                 "condition": {
                                     "expressions": [
                                         {
-                                            "library": "core", 
+                                            "library": "expression", 
                                             "name": "player-variable", 
                                             "variable": "move"
                                         }, 
                                         {
-                                            "library": "core", 
+                                            "library": "expression", 
                                             "name": "value", 
                                             "value": "roll"
                                         }
                                     ], 
-                                    "library": "core", 
+                                    "library": "condition", 
                                     "name": "equals"
                                 }, 
                                 "iffalse": [
@@ -85,7 +85,7 @@
                                         "library": "random", 
                                         "name": "roll-dice-current", 
                                         "size": {
-                                            "library": "core",
+                                            "library": "expression",
                                             "name": "variable",
                                             "variable": "dice::size"
                                         }
@@ -94,16 +94,16 @@
                                     {
                                         "condition": {
                                             "element": {
-                                                    "library": "core", 
+                                                    "library": "expression", 
                                                     "name": "player-variable", 
                                                     "variable": "roll::dice"
                                             }, 
                                             "list": {
-                                                    "library": "core", 
+                                                    "library": "expression", 
                                                     "name": "variable", 
                                                     "variable": "dice::wrong"
                                             },
-                                            "library": "core", 
+                                            "library": "condition", 
                                             "name": "in"
                                         }, 
                                         "iffalse": [
@@ -118,23 +118,23 @@
                                                     "left": {
                                                         "expressions": [
                                                             {
-                                                                "library": "core", 
+                                                                "library": "expression", 
                                                                 "name": "player-variable", 
                                                                 "variable": "score::permanent"
                                                             }, 
                                                             {
-                                                                "library": "core", 
+                                                                "library": "expression", 
                                                                 "name": "player-variable", 
                                                                 "variable": "score::temporary"
                                                             }
                                                         ], 
-                                                        "library": "core", 
+                                                        "library": "expression", 
                                                         "name": "sum"
                                                     }, 
-                                                    "library": "core", 
+                                                    "library": "condition", 
                                                     "name": "greater-equals", 
                                                     "right": {
-                                                        "library": "core", 
+                                                        "library": "expression", 
                                                         "name": "variable",
                                                         "variable": "goal"
                                                     }
@@ -188,19 +188,19 @@
                 "condition": {
                     "condition": {
                         "left": {
-                            "library": "core", 
+                            "library": "expression", 
                             "name": "variable",
                             "variable": "goal"
                         }, 
-                        "library": "core", 
+                        "library": "condition", 
                         "name": "greater", 
                         "right": {
-                            "library": "core", 
+                            "library": "expression", 
                             "name": "player-variable", 
                             "variable": "score::permanent"
                         }
                     }, 
-                    "library": "core", 
+                    "library": "condition", 
                     "name": "all"
                 }, 
                 "library": "core", 

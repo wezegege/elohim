@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from elohim.action import Condition
+from elohim.action.parameter import ExpressionList, ExpressionParameter, ConditionParameter
+
 
 class Equals(Condition):
-    library = 'core'
+    library = 'condition'
     name = 'equals'
     parameters = [
-            ('expressions', 'expression_list'),
+            ('expressions', ExpressionList()),
             ]
 
     def evaluate(self, **kwargs):
@@ -18,11 +20,11 @@ class Equals(Condition):
 
 
 class GreaterEquals(Condition):
-    library = 'core'
+    library = 'condition'
     name = 'greater-equals'
     parameters = [
-            ('left', 'expression'),
-            ('right', 'expression'),
+            ('left', ExpressionParameter()),
+            ('right', ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
@@ -31,11 +33,11 @@ class GreaterEquals(Condition):
 
 
 class Greater(Condition):
-    library = 'core'
+    library = 'condition'
     name = 'greater'
     parameters = [
-            ('left', 'expression'),
-            ('right', 'expression'),
+            ('left', ExpressionParameter()),
+            ('right', ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
@@ -44,21 +46,21 @@ class Greater(Condition):
 
 
 class In(Condition):
-    library = 'core'
+    library = 'condition'
     name = 'in'
     parameters = [
-            ('element', 'expression'),
-            ('list', 'expression'),
+            ('element', ExpressionParameter()),
+            ('list', ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
         return self.values['element'].value(**kwargs) in self.values['list'].value()
 
 class All(Condition):
-    library = 'core'
+    library = 'condition'
     name = 'all'
     parameters = [
-            ('condition', 'condition'),
+            ('condition', ConditionParameter()),
             ]
 
     def evaluate(self):
