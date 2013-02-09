@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.action import Condition
-from elohim.action.parameter import ExpressionList, ExpressionParameter, ConditionParameter
+from elohim import action
+from elohim.action import parameter
 
 
-class Equals(Condition):
+class Equals(action.Condition):
     library = 'condition'
     name = 'equals'
     parameters = [
-            ('expressions', ExpressionList()),
+            ('expressions', parameter.ExpressionList()),
             ]
 
     def evaluate(self, **kwargs):
@@ -19,12 +19,12 @@ class Equals(Condition):
                         for expression in expressions[1:])
 
 
-class GreaterEquals(Condition):
+class GreaterEquals(action.Condition):
     library = 'condition'
     name = 'greater-equals'
     parameters = [
-            ('left', ExpressionParameter()),
-            ('right', ExpressionParameter()),
+            ('left', parameter.ExpressionParameter()),
+            ('right', parameter.ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
@@ -32,12 +32,12 @@ class GreaterEquals(Condition):
                 self.values['right'].value(**kwargs)
 
 
-class Greater(Condition):
+class Greater(action.Condition):
     library = 'condition'
     name = 'greater'
     parameters = [
-            ('left', ExpressionParameter()),
-            ('right', ExpressionParameter()),
+            ('left', parameter.ExpressionParameter()),
+            ('right', parameter.ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
@@ -45,22 +45,22 @@ class Greater(Condition):
                 self.values['right'].value(**kwargs)
 
 
-class In(Condition):
+class In(action.Condition):
     library = 'condition'
     name = 'in'
     parameters = [
-            ('element', ExpressionParameter()),
-            ('list', ExpressionParameter()),
+            ('element', parameter.ExpressionParameter()),
+            ('list', parameter.ExpressionParameter()),
             ]
 
     def evaluate(self, **kwargs):
         return self.values['element'].value(**kwargs) in self.values['list'].value()
 
-class All(Condition):
+class All(action.Condition):
     library = 'condition'
     name = 'all'
     parameters = [
-            ('condition', ConditionParameter()),
+            ('condition', parameter.ConditionParameter()),
             ]
 
     def evaluate(self):

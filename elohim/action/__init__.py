@@ -57,21 +57,6 @@ class Entity(object):
             rules[field] = field_type.from_dict(rules[field])
         return entity(**rules)
 
-    def represent(self, indent=1):
-        indent_size = 2
-        result = "{library}/{name} ({type}) {{\n".format(
-                name=self.name,
-                library=self.library,
-                type=self.type)
-        for field, field_type in self.parameters:
-            result += "{indent}{field} ({field_type}) : ".format(
-                    indent=' ' * (indent * indent_size),
-                    field=field,
-                    field_type=field_type)
-            result += field_type.represent(self.values[field], indent + 1) 
-        result += '{indent}}}\n'.format(indent=' ' * ((indent - 1) * indent_size))
-        return result
-
     @classmethod
     def find_subclasses(cls, seen):
         try:

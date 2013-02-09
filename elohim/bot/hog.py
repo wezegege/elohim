@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.bot.pig import RandomBot
-from elohim.bot.utils.markov import value_iteration
-from elohim.bot.utils.dices import dice_probability
-from elohim.settings import DATAPATH
+from elohim.bot import pig
+from elohim.bot.utils import markov
+from elohim import settings
 
 import os.path
 
 
-class HogBot(RandomBot):
+class HogBot(pig.RandomBot):
     def __init__(self, dice=6, goal=100, wrong=None):
         self.dice = dice
         self.goal = goal
@@ -18,7 +17,7 @@ class HogBot(RandomBot):
         self.filename = self.filename.format(dice=dice, goal=goal,
                 wrong='-'.join(str(value) for value in self.wrong))
         self.filename = os.path.join(
-                DATAPATH,
+                settings.DATAPATH,
                 'games',
                 'pig',
                 'bot',
@@ -41,7 +40,7 @@ class HogBot(RandomBot):
             else:
                 return p[i][j]
 
-        dice_probs = dice_probability(self.dice, max_dice, self.wrong)
+        dice_probs = dices.dice_probability(self.dice, max_dice, self.wrong)
 
         def action_probs(indexes, p):
             probs = list()
@@ -55,7 +54,7 @@ class HogBot(RandomBot):
 
             return probs
 
-        result = value_iteration([
+        result = markov.value_iteration([
             lambda : self.goal,
             lambda i : self.goal,
             ], epsilon, action_probs, True)

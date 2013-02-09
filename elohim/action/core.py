@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.action import Action
-from elohim.action.parameter import PlayerData, ConditionParameter, ActionList
+from elohim import action
+from elohim.action import parameter
 
 
-class SetWinner(Action):
+class SetWinner(action.Action):
     library = 'core'
     name = 'set-winner'
     parameters = [
-        ('criteria', PlayerData()),
+        ('criteria', parameter.PlayerData()),
         ]
 
     def play(self):
@@ -24,13 +24,13 @@ class SetWinner(Action):
             player['client'].send('winner', name=name)
 
 
-class If(Action):
+class If(action.Action):
     library = 'core'
     name = 'if'
     parameters = [
-        ('condition', ConditionParameter()),
-        ('iftrue', ActionList()),
-        ('iffalse', ActionList()),
+        ('condition', parameter.ConditionParameter()),
+        ('iftrue', parameter.ActionList()),
+        ('iffalse', parameter.ActionList()),
         ]
 
     def play(self):
@@ -42,12 +42,12 @@ class If(Action):
                 action.play()
 
 
-class ForeachWhile(Action):
+class ForeachWhile(action.Action):
     library = 'core'
     name = 'foreach-while'
     parameters = [
-        ('condition', ConditionParameter()),
-        ('actions', ActionList()),
+        ('condition', parameter.ConditionParameter()),
+        ('actions', parameter.ActionList()),
         ]
 
     def play(self):
@@ -67,11 +67,11 @@ class ForeachWhile(Action):
                 action.play()
 
 
-class Sequence(Action):
+class Sequence(action.Action):
     library = 'core'
     name = 'sequence'
     parameters = [
-            ('actions', ActionList()),
+            ('actions', parameter.ActionList()),
             ]
 
     def play(self):

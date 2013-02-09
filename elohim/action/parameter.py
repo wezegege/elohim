@@ -31,9 +31,6 @@ class Parameter(Entity):
     def from_dict(self, value):
         return value
 
-    def represent(self, value, indent):
-        return '{value}\n'.format(value=value)
-
 
 class EntityParameter(Parameter):
     library = 'parameter'
@@ -50,9 +47,6 @@ class EntityParameter(Parameter):
 
     def from_dict(self, value):
         return Entity.from_dict(value)
-
-    def represent(self, value, indent):
-        return value.represent(indent)
 
 
 class EntityList(Parameter):
@@ -77,18 +71,6 @@ class EntityList(Parameter):
 
     def from_dict(self, value):
         return [Entity.from_dict(entity) for entity in value]
-
-    def represent(self, value, indent):
-        indent_size = 2
-        result = '[\n'
-        for value in value:
-            result += '{indent}{description}'.format(
-                    indent=' ' * (indent * indent_size),
-                    description=value.represent(indent=indent + 1))
-        result += '{indent}]\n'.format(
-                indent=' ' * ((indent) * indent_size)
-                )
-        return result
 
 
 class ExpressionList(EntityList):

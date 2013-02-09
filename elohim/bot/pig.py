@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
-from elohim.bot.utils.markov import value_iteration
-from elohim.settings import DATAPATH
+from elohim.engine import data
+from elohim.bot.utils import markov
+from elohim import settings
 
 import os.path
 import random
@@ -16,7 +16,7 @@ class RandomBot(object):
 
     def askplayer(self, destination, options):
         result = random.choice(list(options.keys()))
-        Data.set(['players', 'current'] + destination, result)
+        data.Data.set(['players', 'current'] + destination, result)
 
 
 class TurnTotalBot(RandomBot):
@@ -25,13 +25,13 @@ class TurnTotalBot(RandomBot):
         self.goal = goal
 
     def askplayer(self, destination, options):
-        actual = Data.get(['players', 'current', 'score', 'temporary'])
-        score = Data.get(['players', 'current', 'score', 'permanent'])
+        actual = data.Data.get(['players', 'current', 'score', 'temporary'])
+        score = data.Data.get(['players', 'current', 'score', 'permanent'])
         if actual + score > self.goal or actual >= self.turntotal:
             result = 'hold'
         else:
             result = 'roll'
-        Data.set(['players', 'current'] + destination, result)
+        data.Data.set(['players', 'current'] + destination, result)
 
 
 class PigBot(RandomBot):
@@ -41,7 +41,7 @@ class PigBot(RandomBot):
         self.wrong = [1] if wrong is None else wrong
         self.filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(dice=dice, goal=goal, wrong='-'.join(str(value) for value in self.wrong))
         self.filename = os.path.join(
-                DATAPATH,
+                settings.DATAPATH,
                 'games',
                 'pig',
                 'bot',
@@ -55,8 +55,8 @@ class PigBot(RandomBot):
             pass
 
     def askplayer(self, destination, options):
-        current = Data.get(['players', 'current'])
-        players = Data.get(['players', 'list'])
+        current = data.Data.get(['players', 'current'])
+        players = data.Data.get(['players', 'list'])
 
         score = current['score']['permanent']
         try:
@@ -67,7 +67,7 @@ class PigBot(RandomBot):
 
         turn = current['score']['temporary']
         result = 'roll' if threshold > turn else 'hold'
-        Data.set(['players', 'current'] + destination, result)
+        data.Data.set(['players', 'current'] + destination, result)
 
     def optimal(self, epsilon=10**-9):
         def pwin(p, i, j, k):
@@ -92,7 +92,7 @@ class PigBot(RandomBot):
                     (False, 1 - pwin(p, j, i + k, 0)),
                     ]
 
-        values = value_iteration([
+        values = markov.value_iteration([
             lambda : self.goal,
             lambda i : self.goal,
             lambda i, j : self.goal - i,

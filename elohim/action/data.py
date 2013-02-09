@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.action import Action
-from elohim.action.parameter import PlayerData, ValueParameter, ActionList
+from elohim import action
+from elohim.action import parameter
 
 
-class TransferCurrent(Action):
+class TransferCurrent(action.Action):
     library = 'data'
     name = 'tranfer-current'
     parameters = [
-            ('origin', PlayerData()),
-            ('destination', PlayerData()),
+            ('origin', parameter.PlayerData()),
+            ('destination', parameter.PlayerData()),
             ]
 
     def play(self):
@@ -19,12 +19,12 @@ class TransferCurrent(Action):
         self.data.set(['players', 'current'] + self.values['origin'], 0)
 
 
-class SetCurrent(Action):
+class SetCurrent(action.Action):
     library = 'data'
     name = 'set-current'
     parameters = [
-            ('variable', PlayerData()),
-            ('value', ValueParameter()),
+            ('variable', parameter.PlayerData()),
+            ('value', parameter.ValueParameter()),
             ]
 
     def play(self):
@@ -32,12 +32,12 @@ class SetCurrent(Action):
                 self.values['value'])
 
 
-class WhileCurrentTrue(Action):
+class WhileCurrentTrue(action.Action):
     library = 'data'
     name = 'while-current-true'
     parameters = [
-            ('variable', PlayerData()),
-            ('actions', ActionList()),
+            ('variable', parameter.PlayerData()),
+            ('actions', parameter.ActionList()),
             ]
 
     def play(self):

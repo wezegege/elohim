@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.bot.pig import RandomBot, TurnTotalBot, PigBot
-from elohim.client.basic_console import ConsolePlayer
-from elohim.settings import DATAPATH
+from elohim.bot import pig
+from elohim.client import basic_console
 
-from elohim.engine.json_loader import from_json, json_files
+from elohim import settings
+from elohim.engine import json_loader, server
 
 import os, os.path, sys
 
-rules = json_files(DATAPATH)
+rules = json_loader.json_files(settings.DATAPATH)
 if not rules:
     print('No game found')
     sys.exit(0)
@@ -31,9 +31,9 @@ else:
 
     filepath = rules[choice - 1]
 
-server = from_json(filepath)
-server.add_player('Player', ConsolePlayer())
-server.add_player('Bot', PigBot())
+server = server.Server.from_dict(json_loader.from_json(filepath))
+server.add_player('Player', basic_console.ConsolePlayer())
+server.add_player('Bot', pig.PigBot())
 
 try:
     server.play()

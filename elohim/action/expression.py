@@ -1,37 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.action import Expression
-from elohim.action.parameter import ValueParameter, GlobalData, PlayerData, ExpressionList
+from elohim import action
+from elohim.action import parameter
 
 
-class Value(Expression):
+class Value(action.Expression):
     library = 'expression'
     name = 'value'
     parameters = [
-            ('value', ValueParameter()),
+            ('value', parameter.ValueParameter()),
             ]
 
     def value(self, **kwargs):
         return self.values['value']
 
 
-class Variable(Expression):
+class Variable(action.Expression):
     library = 'expression'
     name = 'variable'
     parameters = [
-            ('variable', GlobalData()),
+            ('variable', parameter.GlobalData()),
             ]
 
     def value(self, **kwargs):
         return self.data.get(self.values['variable'])
 
 
-class PlayerVariable(Expression):
+class PlayerVariable(action.Expression):
     library = 'expression'
     name = 'player-variable'
     parameters = [
-            ('variable', PlayerData()),
+            ('variable', parameter.PlayerData()),
             ]
 
     def value(self, **kwargs):
@@ -42,11 +42,11 @@ class PlayerVariable(Expression):
                     self.values['variable'])
 
 
-class Sum(Expression):
+class Sum(action.Expression):
     library = 'expression'
     name = 'sum'
     parameters = [
-            ('expressions', ExpressionList()),
+            ('expressions', parameter.ExpressionList()),
             ]
 
     def value(self, **kwargs):

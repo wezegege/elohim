@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine.data import Data
+from elohim.engine import data
 
 
 class ConsolePlayer(object):
     def send(self, message, **kwargs):
         if message == 'playerturn':
             self.display_all([(['score', 'permanent'], 'Score')])
-            print("It is {name}'s turn".format(name=Data.get(['players', 'current', 'name'])))
+            print("It is {name}'s turn".format(name=data.Data.get(['players', 'current', 'name'])))
         elif message == 'round':
             self.display_current([
                     (['score', 'permanent'], 'Score'),
@@ -30,16 +30,16 @@ class ConsolePlayer(object):
         while True:
             result = input('Your choice ({choices}) : '.format(choices='|'.join(options.keys())))
             if result in options.keys():
-                Data.set(['players', 'current'] + destination, result)
+                data.Data.set(['players', 'current'] + destination, result)
                 return
 
     def display_all(self, todisplay):
-        for player in Data.get(['players', 'list']):
+        for player in data.Data.get(['players', 'list']):
             print('{name} :'.format(name=player['name']))
             self.display_one(player, todisplay, 1)
 
     def display_current(self, todisplay):
-        self.display_one(Data.get(['players', 'current']), todisplay)
+        self.display_one(data.Data.get(['players', 'current']), todisplay)
 
     def display_one(self, player, todisplay, indent=0):
         indent = '  ' * indent
@@ -49,4 +49,4 @@ class ConsolePlayer(object):
                     indent=indent,
                     message=message,
                     width=size,
-                    value=Data.get(field, player)))
+                    value=data.Data.get(field, player)))
