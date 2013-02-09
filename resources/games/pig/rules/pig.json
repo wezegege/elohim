@@ -1,4 +1,15 @@
 {
+    "metadata": {
+        "name": "pig",
+        "min-players": 2,
+        "max-players": 5,
+        "clients": [
+            "random-bot",
+            "turn-total-bot",
+            "pig-bot",
+            "basic-console"
+        ]
+    },
     "settings": [
         {
             "name" : "goal",

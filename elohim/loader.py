@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.bot import pig
-from elohim.client import basic_console
+from elohim.client.bot import pig
+from elohim.client.gui import basic_console
 
 from elohim import settings
 from elohim.engine import json_loader, server

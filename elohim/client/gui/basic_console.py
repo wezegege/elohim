@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine import data
+from elohim.client import gui
 
 
-class ConsolePlayer(object):
+class ConsolePlayer(gui.Gui):
+    name = 'console-player'
+    library = 'console'
+
     def send(self, message, **kwargs):
         if message == 'playerturn':
             self.display_all([(['score', 'permanent'], 'Score')])

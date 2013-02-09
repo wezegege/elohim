@@ -13,11 +13,12 @@ class Parameter(Entity):
     name = 'parameter'
     type = 'parameter'
 
-    def __init__(self, default=Unset):
-        self.default = default
+    def __init__(self, default=Unset, mandatory=True):
+        self.default_value = default
+        self.mandatory=mandatory
 
     def default(self):
-        return None if self.default is Unset else self.default
+        return None if self.default_value is Unset else self.default_value
 
     def player_data(self, value):
         return list()
@@ -123,3 +124,11 @@ class ActionList(EntityList):
 class ValueParameter(Parameter):
     library = 'parameter'
     name = 'value-parameter'
+
+class IntegerParameter(Parameter):
+    library = 'parameter'
+    name = 'integer'
+
+    def __init__(self, mini=None, maxi=None, **kwargs):
+        super().__init__(**kwargs)
+        self.mini, self.maxi = mini, maxi

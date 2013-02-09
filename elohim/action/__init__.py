@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pkgutil
+from elohim.utils import classes
+import collections
 
 
 class NonExistingEntity(Exception):
@@ -17,12 +18,22 @@ class Entity(object):
     library = 'core'
 
     def __init__(self, **kwargs):
-        self.values = dict()
+        print(self.__class__.__name__)
+        print(self.parameters)
+        if not hasattr(self, 'values'):
+            self.values = dict()
         for field, field_type, *args in self.parameters:
             if field in kwargs:
                 self.values[field] = kwargs[field]
+                del kwargs[field]
             else:
                 self.values[field] = field_type.default()
+        super().__init__(**kwargs)
+
+        self.init()
+
+    def init(self):
+        pass
 
     def player_data(self):
         result = list()
@@ -58,26 +69,12 @@ class Entity(object):
         return entity(**rules)
 
     @classmethod
-    def find_subclasses(cls, seen):
-        try:
-            subs = cls.__class__.__subclasses__()
-        except TypeError:
-            subs = cls.__class__.__subclasses__(cls)
+    def list_entities(cls):
+        subs = classes.list_subclasses(cls, __name__, __path__)
+        result = collections.defaultdict(dict)
         for sub in subs:
-            if not sub.library in seen:
-                seen[sub.library] = dict()
-            if not sub.name in seen[sub.library]:
-                seen[sub.library][sub.name] = sub
-                sub.find_subclasses(seen)
-
-    @classmethod
-    def list_entities(self):
-        for _f, submodule, _i in pkgutil.walk_packages(__path__, __name__ + '.'):
-            __import__(submodule)
-        result = dict()
-        self.find_subclasses(result)
+            result[sub.library][sub.name] = sub
         return result
-
 
 class Action(Entity):
     library='action'

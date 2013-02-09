@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.bot import pig
-from elohim.bot.utils import markov
+from elohim.client.bot import pig
+from elohim.client.bot.utils import markov
 from elohim import settings
 
 import os.path
 
 
 class HogBot(pig.RandomBot):
+    name = 'hog-bot'
+    library = 'pig'
+
     def __init__(self, dice=6, goal=100, wrong=None):
         self.dice = dice
         self.goal = goal
