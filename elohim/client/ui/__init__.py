@@ -3,6 +3,6 @@
 
 from elohim import client
 
-class Gui(client.Client):
-    type = 'gui'
-    name = 'gui'
+class Ui(client.Client):
+    type = 'ui'
+    name = 'ui'

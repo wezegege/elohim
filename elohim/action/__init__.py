@@ -18,8 +18,6 @@ class Entity(object):
     library = 'core'
 
     def __init__(self, **kwargs):
-        print(self.__class__.__name__)
-        print(self.parameters)
         if not hasattr(self, 'values'):
             self.values = dict()
         for field, field_type, *args in self.parameters:

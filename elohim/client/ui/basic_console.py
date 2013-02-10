@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from elohim.engine import data
-from elohim.client import gui
+from elohim.client import ui
 
 
-class ConsolePlayer(gui.Gui):
+class ConsolePlayer(ui.Ui):
     name = 'console-player'
     library = 'console'
 

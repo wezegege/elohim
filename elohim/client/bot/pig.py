@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine import data
 from elohim.client import bot
 from elohim.client.bot.utils import markov
 from elohim.action import parameter
@@ -21,7 +20,7 @@ class RandomBot(bot.Bot):
 
     def askplayer(self, destination, options):
         result = random.choice(list(options.keys()))
-        data.Data.set(['players', 'current'] + destination, result)
+        self.data.set(['players', 'current'] + destination, result)
 
 
 class TurnTotalBot(RandomBot):
@@ -30,63 +29,50 @@ class TurnTotalBot(RandomBot):
     parameters = [
             ('turntotal', parameter.IntegerParameter(
                 mini=1, maxi=100, mandatory=False)),
-            ('wrong', parameter.ValueParameter(default=None)),
-            ('dice', parameter.IntegerParameter(default=6)),
-            ('goal', parameter.IntegerParameter(default=100)),
             ]
 
-    def init(self):
-        if self.values['wrong'] is None:
-            self.values['wrong'] = [1]
+    def askplayer(self, destination, options):
         if not self.values['turntotal']:
+            dice = self.data.get(['dice', 'size'])
+            wrong = self.data.get(['dice', 'wrong'])
             self.values['turntotal'] = int(dice*(dice+1)/ 2 -
                     sum(wrong))
-
-    def askplayer(self, destination, options):
-        actual = data.Data.get(['players', 'current', 'score', 'temporary'])
-        score = data.Data.get(['players', 'current', 'score', 'permanent'])
-        if actual + score > self.values['goal'] or actual >= self.values['turntotal']:
+        actual = self.data.get(['players', 'current', 'score', 'temporary'])
+        score = self.data.get(['players', 'current', 'score', 'permanent'])
+        if actual + score > self.data.get(['goal']) or actual >= self.values['turntotal']:
             result = 'hold'
         else:
             result = 'roll'
-        data.Data.set(['players', 'current'] + destination, result)
+        self.data.set(['players', 'current'] + destination, result)
 
 
 class PigBot(RandomBot):
     name = 'pig-bot'
     library = 'pig'
-    parameters = [
-            ('wrong', parameter.ValueParameter()),
-            ('dice', parameter.IntegerParameter(default=6)),
-            ('goal', parameter.IntegerParameter(default=100)),
-            ]
-
-    def init(self):
-        if self.values['wrong'] is None:
-            self.values['wrong'] = [1]
-        filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(
-                dice=self.values['dice'],
-                goal=self.values['goal'],
-                wrong='-'.join(str(value)
-                    for value in self.values['wrong']))
-        filename = os.path.join(
-                settings.DATAPATH,
-                'games',
-                'pig',
-                'bot',
-                filename)
-        todo = list()
-        try:
-            with open(filename, 'r') as content:
-                for line in content:
-                    todo.append([int(value) for value in line.split('\t')])
-        except FileNotFoundError:
-            pass
-        self.values['todo'] = todo
 
     def askplayer(self, destination, options):
-        current = data.Data.get(['players', 'current'])
-        players = data.Data.get(['players', 'list'])
+        if not 'todo' in self.values:
+            filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(
+                    dice=self.data.get(['dice', 'size']),
+                    goal=self.data.get(['goal']),
+                    wrong='-'.join(str(value)
+                        for value in self.data.get(['dice', 'wrong'])))
+            filename = os.path.join(
+                    settings.DATAPATH,
+                    'games',
+                    'pig',
+                    'bot',
+                    filename)
+            todo = list()
+            try:
+                with open(filename, 'r') as content:
+                    for line in content:
+                        todo.append([int(value) for value in line.split('\t')])
+            except FileNotFoundError:
+                pass
+            self.values['todo'] = todo
+        current = self.data.get(['players', 'current'])
+        players = self.data.get(['players', 'list'])
 
         score = current['score']['permanent']
         try:
@@ -97,7 +83,7 @@ class PigBot(RandomBot):
 
         turn = current['score']['temporary']
         result = 'roll' if threshold > turn else 'hold'
-        data.Data.set(['players', 'current'] + destination, result)
+        self.data.set(['players', 'current'] + destination, result)
 
     def optimal(self, epsilon=10**-9):
         goal = self.values['goal']

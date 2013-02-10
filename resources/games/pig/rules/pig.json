@@ -3,11 +3,13 @@
         "name": "pig",
         "min-players": 2,
         "max-players": 5,
-        "clients": [
+        "ui": [
+            "basic-console"
+        ],
+        "bot": [
             "random-bot",
             "turn-total-bot",
-            "pig-bot",
-            "basic-console"
+            "pig-bot"
         ]
     },
     "settings": [
