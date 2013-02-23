@@ -1,53 +1,90 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
 
-class Data(object):
 
-    def __init__(self, player_data=None, variables=None):
-        self.content = dict()
-        self.set(['players', 'list'], list())
-        self.set(['players', 'count'], 0)
-        self.set(['players', 'index'], -1)
-        self.player_data = list() if player_data is None else player_data
-        self.variables = dict() if variables is None else variables
+class Visibility(object):
+    class All(object):
+        pass
 
-    def add_player(self, name, client):
-        index = self.get(['players', 'count'])
-        self.add(['players', 'count'], 1)
-        for field in self.player_data:
-            for indexed, parameters in self.variables:
-                if field == indexed:
-                    self.set(['players', 'list', index] + field, parameters.get('default', None))
-                    break
-            else:
-                self.set(['players', 'list', index] + field, None)
-        for field, value in (
-                ('name', name),
-                ('client', client),
-                ('ingame', True),
-                ):
-            self.set(['players', 'list', index, field], value)
+    class Player(object):
+        pass
 
-    def get(self, index, element=None):
-        result = self.content if element is None else element
-        for entry in index:
-            result = result[entry]
-        return result
+    class TeamMembers(object):
+        pass
 
-    def set(self, index, value):
-        result = self.content
-        for entry in index[:-1]:
-            if isinstance(result, dict) and entry not in result:
-                result[entry] = dict()
-            elif isinstance(result, list) and len(result) >= entry:
-                for count in range(entry + 1 - len(result)):
-                    result.append(dict())
-            result = result[entry]
-        result[index[-1]] = value
+    class Opponents(object):
+        pass
+
+    class Nobody(object):
+        pass
+
+def operation(func):
+    def wrapper(self, index, *args, **kwargs):
+        if self.reference:
+            return getattr(self.reference(self.root), func.__name__)(index, *args, **kwargs)
+        elif index:
+            index = copy.copy(index)
+            entry = index.pop(0)
+            return getattr(self.getitem(entry), func.__name__)(index, *args, **kwargs)
+        else:
+            return func(self, *args, **kwargs)
+    return wrapper
+
+
+class Entry(object):
+    class Unset(object):
+        pass
+
+    def __init__(self, **kwargs):
+        self.reference = kwargs.get('reference', None)
+        self.root = kwargs.get('root', self)
+        self.content = kwargs.get('content', self.Unset)
+        self.default = kwargs.get('default', self.Unset)
+        self.visible = kwargs.get('visibility', Visibility.All)
+        self.subentries = dict()
+
+    @operation
+    def refer(self, reference):
+        self.reference = reference
+
+    @operation
+    def get(self):
+        if self.content is self.Unset:
+            return self
+        else:
+            return self.content
+
+    @operation
+    def add(self, value):
+        self.content += value
         return value
 
-    def add(self, index, value):
-        entry = self.get(index)
-        self.set(index, entry + value)
+    @operation
+    def set(self, value):
+        self.content = value
+        return value
+
+    def getitem(self, field):
+        if self.reference is None:
+            return self.subentries.setdefault(field, Entry(root=self.root))
+        else:
+            return self.reference(self.root).getitem(field)
+
+    def __iter__(self):
+        for value in self.subentries.values():
+            yield value
+
+    def __contains__(self, value):
+        return value in self.subentries
+
+    def __repr__(self):
+        if self.reference is not None:
+            return repr(self.reference(self.root))
+        elif self.content is not self.Unset:
+            return repr(self.content)
+        else:
+            return repr(self.subentries)
+
 

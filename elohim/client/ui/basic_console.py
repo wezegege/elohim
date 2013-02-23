@@ -39,7 +39,7 @@ class ConsolePlayer(ui.Ui):
 
     def display_all(self, todisplay):
         for player in self.data.get(['players', 'list']):
-            print('{name} :'.format(name=player['name']))
+            print('{name} :'.format(name=player.get(['name'])))
             self.display_one(player, todisplay, 1)
 
     def display_current(self, todisplay):
@@ -53,4 +53,4 @@ class ConsolePlayer(ui.Ui):
                     indent=indent,
                     message=message,
                     width=size,
-                    value=self.data.get(field, player)))
+                    value=player.get(field)))

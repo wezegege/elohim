@@ -74,14 +74,14 @@ class PigBot(RandomBot):
         current = self.data.get(['players', 'current'])
         players = self.data.get(['players', 'list'])
 
-        score = current['score']['permanent']
+        score = current.get(['score', 'permanent'])
         try:
-            against = max(player['score']['permanent'] for player in players if player != current)
+            against = max(player.get(['score', 'permanent']) for player in players if player != current)
         except ValueError:
             against = 0
         threshold = self.values['todo'][score][against]
 
-        turn = current['score']['temporary']
+        turn = current.get(['score', 'temporary'])
         result = 'roll' if threshold > turn else 'hold'
         self.data.set(['players', 'current'] + destination, result)
 

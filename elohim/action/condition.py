@@ -28,8 +28,7 @@ class GreaterEquals(action.Condition):
             ]
 
     def evaluate(self, **kwargs):
-        return self.values['left'].value(**kwargs) >= \
-                self.values['right'].value(**kwargs)
+        return bool(self.values['left'].value(**kwargs) >= self.values['right'].value(**kwargs))
 
 
 class Greater(action.Condition):
@@ -41,8 +40,9 @@ class Greater(action.Condition):
             ]
 
     def evaluate(self, **kwargs):
-        return self.values['left'].value(**kwargs) > \
-                self.values['right'].value(**kwargs)
+        left = self.values['left'].value(**kwargs)
+        right = self.values['right'].value(**kwargs)
+        return bool(left > right)
 
 
 class In(action.Condition):

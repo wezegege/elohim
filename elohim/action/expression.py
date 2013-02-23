@@ -35,11 +35,8 @@ class PlayerVariable(action.Expression):
             ]
 
     def value(self, **kwargs):
-        if 'player' in kwargs:
-            return self.data.get(self.values['variable'], kwargs['player'])
-        else:
-            return self.data.get(['players', 'current'] +
-                    self.values['variable'])
+        player = kwargs.get('player', self.data.get(['players', 'current']))
+        return player.get(self.values['variable'])
 
 
 class Sum(action.Expression):
