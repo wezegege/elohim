@@ -20,7 +20,7 @@ class Entity(object):
     def __init__(self, **kwargs):
         if not hasattr(self, 'values'):
             self.values = dict()
-        for field, field_type, *args in self.parameters:
+        for field, field_type, in self.parameters:
             if field in kwargs:
                 self.values[field] = kwargs[field]
                 del kwargs[field]
@@ -35,13 +35,13 @@ class Entity(object):
 
     def player_data(self):
         result = list()
-        for field, field_type, *args in self.parameters:
+        for field, field_type, in self.parameters:
             result.extend(field_type.player_data(self.values[field]))
         return result
 
     def set_data(self, data):
         self.data = data
-        for field, field_type, *args in self.parameters:
+        for field, field_type, in self.parameters:
             field_type.set_data(self.values[field], data)
 
     def to_dict(self):

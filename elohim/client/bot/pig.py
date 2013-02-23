@@ -55,8 +55,8 @@ class PigBot(RandomBot):
             filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(
                     dice=self.data.get(['dice', 'size']),
                     goal=self.data.get(['goal']),
-                    wrong='-'.join(str(value)
-                        for value in self.data.get(['dice', 'wrong'])))
+                    wrong='-'.join(str(side)
+                        for side in self.data.get(['dice', 'wrong'])))
             filename = os.path.join(
                     settings.DATAPATH,
                     'games',

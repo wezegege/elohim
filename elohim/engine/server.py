@@ -60,6 +60,7 @@ class Server(object):
         settings = {'::'.join(field) : value for field, value in self.data.settings}
         metadata = {
                 'defaults' : defaults,
+                'settings' : settings,
                 'rules' : self.rules.to_dict(),
                 }
         return metadata

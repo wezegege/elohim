@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from elohim.client.bot import pig
-from elohim.client.bot.utils import markov
+from elohim.client.bot.utils import markov, dices
 from elohim import settings
 
 import os.path
@@ -18,7 +18,7 @@ class HogBot(pig.RandomBot):
         self.wrong = [1] if wrong is None else wrong
         self.filename = 'hog_d{dice}w{wrong}g{goal}.txt'
         self.filename = self.filename.format(dice=dice, goal=goal,
-                wrong='-'.join(str(value) for value in self.wrong))
+                wrong='-'.join(str(side) for side in self.wrong))
         self.filename = os.path.join(
                 settings.DATAPATH,
                 'games',
@@ -30,7 +30,7 @@ class HogBot(pig.RandomBot):
             with open(self.filename, 'r') as content:
                 for line in content:
                     self.todo.append([int(value) for value in line.split('\t')])
-        except FileNotFoundError as ex:
+        except FileNotFoundError:
             pass
 
 

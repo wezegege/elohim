@@ -7,7 +7,7 @@ from elohim.client.ui import basic_console
 from elohim import settings
 from elohim.engine import json_loader, server
 
-import os, os.path, sys
+import sys
 
 rules = json_loader.json_files(settings.DATAPATH)
 if not rules:

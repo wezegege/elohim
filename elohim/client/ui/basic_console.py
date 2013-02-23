@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.engine import data
 from elohim.client import ui
 
 
