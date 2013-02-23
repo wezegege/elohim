@@ -42,9 +42,13 @@
             "default" : [1]
         }
         ],
-    "defaults": {
-        "score::permanent" : 0,
-        "score::temporary" : 0
+    "variables": {
+        "score::permanent" : {
+            "default" : 0
+        },
+        "score::temporary" : {
+            "default" : 0
+        }
     },
     "rules": {
         "actions": [

@@ -3,42 +3,40 @@
 
 
 class Data(object):
-    content = dict()
-    defaults = dict()
 
-    @classmethod
-    def init(cls, player_data, defaults):
-        cls.set(['players', 'list'], list())
-        cls.set(['players', 'count'], 0)
-        cls.set(['players', 'index'], -1)
-        cls.player_data = player_data
-        cls.defaults = defaults
+    def __init__(self, player_data=None, variables=None):
+        self.content = dict()
+        self.set(['players', 'list'], list())
+        self.set(['players', 'count'], 0)
+        self.set(['players', 'index'], -1)
+        self.player_data = list() if player_data is None else player_data
+        self.variables = dict() if variables is None else variables
 
-    @classmethod
-    def add_player(cls, name, client):
-        index = cls.get(['players', 'count'])
-        cls.add(['players', 'count'], 1)
-        for field in cls.player_data:
-            for indexed, default in cls.defaults:
-                if field  == indexed:
-                    cls.set(['players', 'list', index] + field, default)
+    def add_player(self, name, client):
+        index = self.get(['players', 'count'])
+        self.add(['players', 'count'], 1)
+        for field in self.player_data:
+            for indexed, parameters in self.variables:
+                if field == indexed:
+                    self.set(['players', 'list', index] + field, parameters.get('default', None))
                     break
             else:
-                cls.set(['players', 'list', index] + field, None)
-        cls.set(['players', 'list', index, 'name'], name)
-        cls.set(['players', 'list', index, 'client'], client)
-        cls.set(['players', 'list', index, 'ingame'], True)
+                self.set(['players', 'list', index] + field, None)
+        for field, value in (
+                ('name', name),
+                ('client', client),
+                ('ingame', True),
+                ):
+            self.set(['players', 'list', index, field], value)
 
-    @classmethod
-    def get(cls, index, element=None):
-        result = cls.content if element is None else element
+    def get(self, index, element=None):
+        result = self.content if element is None else element
         for entry in index:
             result = result[entry]
         return result
 
-    @classmethod
-    def set(cls, index, value):
-        result = cls.content
+    def set(self, index, value):
+        result = self.content
         for entry in index[:-1]:
             if isinstance(result, dict) and entry not in result:
                 result[entry] = dict()
@@ -49,8 +47,7 @@ class Data(object):
         result[index[-1]] = value
         return value
 
-    @classmethod
-    def add(cls, index, value):
-        entry = cls.get(index)
-        cls.set(index, entry + value)
+    def add(self, index, value):
+        entry = self.get(index)
+        self.set(index, entry + value)
 

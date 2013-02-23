@@ -6,9 +6,10 @@ from elohim import action
 class Server(object):
     def __init__(self, **kwargs):
         self.rules = kwargs['rules']
-        data.Data.init(self.rules.player_data(), kwargs.get('defaults', dict()))
-        #self.data = data.Data(rules.player_data())
-        self.data = data.Data
+        #data.Data.init(self.rules.player_data(), kwargs.get('defaults', dict()))
+        #self.data = data.Data
+        self.data = data.Data(player_data=self.rules.player_data(),
+                variables=kwargs.get('variables', dict()))
         for field, value in kwargs.get('settings', list()):
             self.data.set(field, value)
         for field, value in kwargs.get('metadata', dict()).items():
@@ -34,7 +35,7 @@ class Server(object):
     @classmethod
     def from_dict(cls, gamedata):
         rules = action.Entity.from_dict(gamedata['rules'])
-        defaults = [(field.split('::'), value) for field, value in gamedata['defaults'].items()]
+        variables = [(field.split('::'), value) for field, value in gamedata['variables'].items()]
         settings = [(entry['name'].split('::'), entry['default']) for entry in gamedata['settings']]
-        return cls(rules=rules, defaults=defaults, settings=settings)
+        return cls(rules=rules, variables=variables, settings=settings)
 
