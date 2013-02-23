@@ -17,7 +17,7 @@ class Server(object):
         for dataset in [
                 (
                     (['players', 'count'], 0),
-                    (['players', 'index'], 0),
+                    (['players', 'index'], -1),
                 ),
                 kwargs.get('settings', list()),
                 kwargs.get('metadata', dict()).items(),
