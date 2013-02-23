@@ -83,12 +83,12 @@ class Action(Entity):
         pass
 
     def send(self, message, **kwargs):
-        result = None
         for player in self.data.get(['players', 'list']):
-            response = player.get(['client']).send(message, **kwargs)
-            if response:
-                result = response
-        return result
+            player.get(['client']).send(message, **kwargs)
+
+    def askcurrent(self, options):
+        current = self.data.get(['players', 'current', 'client'])
+        return current.askplayer(options)
 
 class Expression(Entity):
     library='expression'

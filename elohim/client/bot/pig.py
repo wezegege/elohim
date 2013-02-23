@@ -15,10 +15,7 @@ class RandomBot(bot.Bot):
     library = 'pig'
 
     def send(self, message, **kwargs):
-        if message == 'askcurrent':
-            current = self.data.get(['players', 'current', 'name'])
-            if current == self.values['name']:
-                return self.askplayer(kwargs['options'])
+        pass
 
     def askplayer(self, options):
         result = random.choice(list(options.keys()))

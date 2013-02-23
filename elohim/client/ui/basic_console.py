@@ -17,10 +17,6 @@ class ConsolePlayer(ui.Ui):
                     (['score', 'permanent'], 'Score'),
                     (['score', 'temporary'], 'Turn total'),
                     ])
-        elif message == 'askcurrent':
-            current = self.data.get(['players', 'current', 'name'])
-            if current == self.values['name']:
-                return self.askplayer(kwargs['options'])
         elif message == 'winner':
             self.display_all([(['score', 'permanent'], 'Score')])
             print('{name} wins'.format(name=kwargs['name']))

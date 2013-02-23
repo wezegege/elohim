@@ -14,7 +14,7 @@ class AskPlayer(Action):
             ]
 
     def play(self):
-        result = self.send('askcurrent', options=self.values['options'])
+        result = self.askcurrent(self.values['options'])
         destination = ['players', 'current'] + self.values['destination']
         self.send('choice', choice=result)
         self.data.set(destination, result)
