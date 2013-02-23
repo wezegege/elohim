@@ -6,5 +6,4 @@ from elohim import client
 class Bot(client.Client):
     type = 'bot'
     name = 'bot'
-    parameters = dict()
 

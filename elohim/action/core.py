@@ -16,13 +16,10 @@ class SetWinner(action.Action):
         name = None
         score = None
         for player in self.data.get(['players', 'list']):
-            if score is None or \
-                    score < player.get(self.values['criteria']):
+            if score is None or score < player.get(self.values['criteria']):
                 score = player.get(self.values['criteria'])
                 name = player.get(['name'])
-        for player in self.data.get(['players', 'list']):
-            player.get(['client']).send('winner', name=name)
-
+        self.send('winner', name=name)
 
 
 class If(action.Action):
@@ -61,7 +58,7 @@ class ForeachWhile(action.Action):
                         self.data.get(['players', 'index']), 'ingame']):
                     break
 
-            self.data.get(['players', 'current', 'client']).send('playerturn')
+            self.send('playerturn')
             for action in self.values['actions']:
                 action.play()
 

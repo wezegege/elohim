@@ -3,11 +3,16 @@
 
 from elohim.utils import classes
 from elohim import action
+from elohim.action import parameter
 
 import collections
 
 
 class Client(action.Entity):
+    parameters = [
+            ('name', parameter.ValueParameter()),
+            ]
+
     @classmethod
     def list_clients(cls):
         subs = classes.list_subclasses(cls, __name__, __path__)

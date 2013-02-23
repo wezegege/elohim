@@ -67,6 +67,11 @@ class Entry(object):
                 raise AttributeError()
 
     @operation
+    def reset(self):
+        if not self.default is self.Unset:
+            self.content = self.default
+
+    @operation
     def get(self):
         if self.content is self.Unset:
             return self

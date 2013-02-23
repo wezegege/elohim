@@ -17,6 +17,7 @@ class RollDiceCurrent(Action):
 
     def play(self):
         roll = random.randint(1, self.values['size'].value())
-        self.data.get(['players', 'current', 'client']).send('roll', roll=roll)
-        self.data.set(['players', 'current'] + self.values['destination'], roll)
+        self.send('roll', roll=roll)
+        destination = ['players', 'current'] + self.values['destination']
+        self.data.set(destination, roll)
 

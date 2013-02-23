@@ -16,11 +16,13 @@ class RandomBot(bot.Bot):
 
     def send(self, message, **kwargs):
         if message == 'askcurrent':
-            self.askplayer(kwargs['destination'], kwargs['options'])
+            current = self.data.get(['players', 'current', 'name'])
+            if current == self.values['name']:
+                return self.askplayer(kwargs['options'])
 
-    def askplayer(self, destination, options):
+    def askplayer(self, options):
         result = random.choice(list(options.keys()))
-        self.data.set(['players', 'current'] + destination, result)
+        return result
 
 
 class TurnTotalBot(RandomBot):
@@ -31,7 +33,7 @@ class TurnTotalBot(RandomBot):
                 mini=1, maxi=100, mandatory=False)),
             ]
 
-    def askplayer(self, destination, options):
+    def askplayer(self, options):
         if not self.values['turntotal']:
             dice = self.data.get(['dice', 'size'])
             wrong = self.data.get(['dice', 'wrong'])
@@ -43,14 +45,14 @@ class TurnTotalBot(RandomBot):
             result = 'hold'
         else:
             result = 'roll'
-        self.data.set(['players', 'current'] + destination, result)
+        return result
 
 
 class PigBot(RandomBot):
     name = 'pig-bot'
     library = 'pig'
 
-    def askplayer(self, destination, options):
+    def askplayer(self, options):
         if not 'todo' in self.values:
             filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(
                     dice=self.data.get(['dice', 'size']),
@@ -83,7 +85,7 @@ class PigBot(RandomBot):
 
         turn = current.get(['score', 'temporary'])
         result = 'roll' if threshold > turn else 'hold'
-        self.data.set(['players', 'current'] + destination, result)
+        return result
 
     def optimal(self, epsilon=10**-9):
         goal = self.values['goal']

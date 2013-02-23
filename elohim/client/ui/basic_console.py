@@ -18,14 +18,23 @@ class ConsolePlayer(ui.Ui):
                     (['score', 'temporary'], 'Turn total'),
                     ])
         elif message == 'askcurrent':
-            self.askplayer(kwargs['destination'], kwargs['options'])
+            current = self.data.get(['players', 'current', 'name'])
+            if current == self.values['name']:
+                return self.askplayer(kwargs['options'])
         elif message == 'winner':
             self.display_all([(['score', 'permanent'], 'Score')])
             print('{name} wins'.format(name=kwargs['name']))
+        elif message == 'choice':
+            print('{name} chose to {choice}'.format(
+                name=self.data.get(['players', 'current', 'name']),
+                choice=kwargs['choice']
+                ))
         elif message == 'roll':
-            print('You rolled a {roll}'.format(roll=kwargs['roll']))
+            print('{name} rolled a {roll}'.format(
+                name=self.data.get(['players', 'current', 'name']),
+                roll=kwargs['roll']))
 
-    def askplayer(self, destination, options):
+    def askplayer(self, options):
         print('Options :')
         width = max(len(field) for field in options.keys())
         for field, value in options.items():
@@ -33,8 +42,7 @@ class ConsolePlayer(ui.Ui):
         while True:
             result = input('Your choice ({choices}) : '.format(choices='|'.join(options.keys())))
             if result in options.keys():
-                self.data.set(['players', 'current'] + destination, result)
-                return
+                return result
 
     def display_all(self, todisplay):
         for player in self.data.get(['players', 'list']):

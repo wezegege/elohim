@@ -28,7 +28,9 @@ class GreaterEquals(action.Condition):
             ]
 
     def evaluate(self, **kwargs):
-        return bool(self.values['left'].value(**kwargs) >= self.values['right'].value(**kwargs))
+        left = self.values['left'].value(**kwargs)
+        right = self.values['right'].value(**kwargs)
+        return bool(left >= right)
 
 
 class Greater(action.Condition):
@@ -54,7 +56,9 @@ class In(action.Condition):
             ]
 
     def evaluate(self, **kwargs):
-        return self.values['element'].value(**kwargs) in self.values['list'].value()
+        element = self.values['element'].value(**kwargs)
+        container = self.values['list'].value()
+        return element in container
 
 class All(action.Condition):
     library = 'condition'

@@ -82,6 +82,14 @@ class Action(Entity):
     def play(self):
         pass
 
+    def send(self, message, **kwargs):
+        result = None
+        for player in self.data.get(['players', 'list']):
+            response = player.get(['client']).send(message, **kwargs)
+            if response:
+                result = response
+        return result
+
 class Expression(Entity):
     library='expression'
     name='expression'

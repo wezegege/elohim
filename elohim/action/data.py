@@ -14,9 +14,10 @@ class TransferCurrent(action.Action):
             ]
 
     def play(self):
-        self.data.add(['players', 'current'] + self.values['destination'],
-                self.data.get(['players', 'current'] + self.values['origin']))
-        self.data.set(['players', 'current'] + self.values['origin'], 0)
+        origin = ['players', 'current'] + self.values['origin']
+        destination = ['players', 'current'] + self.values['destination']
+        self.data.add(destination, self.data.get(origin))
+        self.data.reset(origin)
 
 
 class SetCurrent(action.Action):
@@ -28,8 +29,8 @@ class SetCurrent(action.Action):
             ]
 
     def play(self):
-        self.data.set(['players', 'current'] + self.values['variable'],
-                self.values['value'])
+        variable = ['players', 'current'] + self.values['variable']
+        self.data.set(variable, self.values['value'])
 
 
 class WhileCurrentTrue(action.Action):
@@ -41,8 +42,9 @@ class WhileCurrentTrue(action.Action):
             ]
 
     def play(self):
-        self.data.set(['players', 'current'] + self.values['variable'], True)
-        while self.data.get(['players', 'current'] + self.values['variable']):
-            self.data.get(['players', 'current', 'client']).send('round')
+        variable = ['players', 'current'] + self.values['variable']
+        self.data.set(variable, True)
+        while self.data.get(variable):
+            self.send('round')
             for action in self.values['actions']:
                 action.play()

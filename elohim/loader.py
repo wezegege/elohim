@@ -32,8 +32,8 @@ else:
     filepath = rules[choice - 1]
 
 server = server.Server.from_dict(json_loader.from_json(filepath))
-server.add_player('Player', basic_console.ConsolePlayer())
-server.add_player('Bot', pig.PigBot())
+server.add_player('Player', basic_console.ConsolePlayer(name='Player'))
+server.add_player('Bot', pig.PigBot(name='Bot'))
 
 try:
     server.play()
