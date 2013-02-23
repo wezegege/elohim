@@ -42,12 +42,29 @@ class Entry(object):
         self.root = kwargs.get('root', self)
         self.content = kwargs.get('content', self.Unset)
         self.default = kwargs.get('default', self.Unset)
-        self.visible = kwargs.get('visibility', Visibility.All)
+        self.visibility = kwargs.get('visibility', Visibility.All)
         self.subentries = dict()
+
+    def initialize(self):
+        if self.reference:
+            self.reference(self.root).initialize()
+        else:
+            if not self.default is self.Unset:
+                self.content = self.default
+            for field, entry in self.subentries.items():
+                entry.initialize()
 
     @operation
     def refer(self, reference):
         self.reference = reference
+
+    @operation
+    def configure(self, **kwargs):
+        for field, value in kwargs.items():
+            if hasattr(self, field):
+                setattr(self, field, value)
+            else:
+                raise AttributeError()
 
     @operation
     def get(self):

@@ -24,13 +24,15 @@ class Server(object):
                 ]:
             for field, value in dataset:
                 self.data.set(field, value)
+
         def current_reference(root):
             index = root.get(['players', 'index'])
             players = root.get(['players', 'list'])
             if index in players:
                 return players.get([index])
             else:
-                raise IndexError
+                return data.Entry()
+
         self.data.refer(['players', 'current'], current_reference)
 
         self.rules.set_data(self.data)
@@ -38,13 +40,8 @@ class Server(object):
     def add_player(self, name, client):
         index = self.data.get(['players', 'count'])
         self.data.add(['players', 'count'], 1)
-        for field in self.player_data:
-            for indexed, parameters in self.variables:
-                if field == indexed:
-                    self.data.set(['players', 'list', index] + field, parameters.get('default', None))
-                    break
-            else:
-                self.data.set(['players', 'list', index] + field, None)
+        for field, config in self.variables:
+            self.data.get(['players', 'list', index]).configure(field, **config)
         for field, value in (
                 ('name', name),
                 ('client', client),
@@ -55,6 +52,7 @@ class Server(object):
         client.set_data(self.data)
 
     def play(self):
+        self.data.initialize()
         self.rules.play()
 
     def to_dict(self):
