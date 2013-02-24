@@ -8,6 +8,9 @@ from elohim import settings
 from elohim.engine import json_loader, server
 
 import sys
+import logging, logging.config
+
+logging.config.dictConfig(settings.LOGGING)
 
 rules = json_loader.json_files(settings.DATAPATH)
 if not rules:

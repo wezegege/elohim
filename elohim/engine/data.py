@@ -3,6 +3,7 @@
 
 import copy
 import re
+import functools
 
 
 class Visibility(object):
@@ -24,17 +25,32 @@ class Visibility(object):
 
 def operation(strict=True):
     def decorator(func):
+        @functools.wraps(func)
         def wrapper(self, index, *args, **kwargs):
             if self.reference:
-                return getattr(self.reference(self.root), func.__name__)(index, *args, **kwargs)
+                result = getattr(self.pointee, func.__name__)(index, *args, **kwargs)
             elif index:
                 index = copy.copy(index)
                 entry = index.pop(0)
-                return getattr(self.getitem(entry, strict), func.__name__)(index, *args, **kwargs)
+                result = getattr(self.getitem(entry, strict), func.__name__)(index, *args, **kwargs)
             else:
-                return func(self, *args, **kwargs)
+                result = func(self, *args, **kwargs)
+            return result
         return wrapper
     return decorator
+
+
+def modifier(func):
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        old = self.content
+        result = func(self, *args, **kwargs)
+        if old != self.content:
+            for condition, handler in self.handlers:
+                if condition(self.content):
+                    handler(self.content)
+        return result
+    return wrapper
 
 
 class Entry(object):
@@ -48,7 +64,9 @@ class Entry(object):
         self.default = kwargs.get('default', self.Unset)
         self.visibility = kwargs.get('visibility', Visibility.All)
         self.subentries = dict()
+        self.handlers = list()
 
+    @modifier
     def initialize(self):
         if not self.reference:
             if not self.default is self.Unset:
@@ -59,6 +77,19 @@ class Entry(object):
     @operation(strict=False)
     def refer(self, reference):
         self.reference = parse_pointer(reference)
+        for modifier in self.reference.modifiers():
+            self.root.add_handler(modifier, lambda _ : True, self.update_pointee)
+        self.update_pointee(None)
+
+    def update_pointee(self, _value):
+        try:
+            self.pointee = self.reference(self.root)
+        except KeyError:
+            self.pointee = None
+
+    @operation()
+    def add_handler(self, condition, handler):
+        self.handlers.append((condition, handler))
 
     @operation(strict=False)
     def configure(self, **kwargs):
@@ -69,6 +100,7 @@ class Entry(object):
                 raise AttributeError()
 
     @operation()
+    @modifier
     def reset(self):
         if not self.default is self.Unset:
             self.content = self.default
@@ -88,11 +120,13 @@ class Entry(object):
             return self.content
 
     @operation()
+    @modifier
     def add(self, value):
         self.content += value
         return value
 
     @operation(strict=False)
+    @modifier
     def set(self, value):
         self.content = value
         return value
@@ -103,7 +137,7 @@ class Entry(object):
                 raise KeyError
             return self.subentries.setdefault(field, Entry(root=self.root))
         else:
-            return self.reference(self.root).getitem(field)
+            return self.pointee.getitem(field)
 
     def __iter__(self):
         for value in self.subentries.values():
@@ -144,6 +178,16 @@ def parse_pointer(reference):
 
         def __repr__(self):
             return repr(self.words)
+
+        def modifiers(self):
+            result = list()
+            if all(isinstance(word, Word) for word in self.words):
+                result = [[str(word) for word in self.words]]
+            else:
+                for word in self.words:
+                    if isinstance(word, Reference):
+                        result.extend(word.modifiers())
+            return result
 
         def __str__(self):
             return '<{words}>'.format(words='::'.join(str(word) for word in self.words))

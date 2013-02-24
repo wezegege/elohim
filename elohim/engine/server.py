@@ -41,7 +41,6 @@ class Server(object):
 
     def play(self):
         self.data.initialize()
-        print(self.data)
         self.rules.play()
 
     def to_dict(self):
