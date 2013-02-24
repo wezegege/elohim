@@ -7,10 +7,6 @@ from elohim import action
 class Server(object):
     def __init__(self, **kwargs):
         self.rules = kwargs['rules']
-        #data.Data.init(self.rules.player_data(), kwargs.get('defaults', dict()))
-        #self.data = data.Data
-        #self.data = data.Data(player_data=self.rules.player_data(),
-        #        variables=kwargs.get('variables', dict()))
         self.player_data = self.rules.player_data()
         self.variables = kwargs.get('variables', dict())
         self.data = data.Entry()
@@ -25,15 +21,7 @@ class Server(object):
             for field, value in dataset:
                 self.data.set(field, value)
 
-        def current_reference(root):
-            index = root.get(['players', 'index'])
-            players = root.get(['players', 'list'])
-            if index in players:
-                return players.get([index])
-            else:
-                return data.Entry()
-
-        self.data.refer(['players', 'current'], current_reference)
+        self.data.refer(['players', 'current'], 'players::list::<players::index>')
 
         self.rules.set_data(self.data)
 
@@ -41,7 +29,7 @@ class Server(object):
         index = self.data.get(['players', 'count'])
         self.data.add(['players', 'count'], 1)
         for field, config in self.variables:
-            self.data.get(['players', 'list', index]).configure(field, **config)
+            self.data.getdefault(['players', 'list', index]).configure(field, **config)
         for field, value in (
                 ('name', name),
                 ('client', client),
@@ -53,6 +41,7 @@ class Server(object):
 
     def play(self):
         self.data.initialize()
+        print(self.data)
         self.rules.play()
 
     def to_dict(self):

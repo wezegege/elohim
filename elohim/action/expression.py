@@ -35,7 +35,10 @@ class PlayerVariable(action.Expression):
             ]
 
     def value(self, **kwargs):
-        player = kwargs.get('player', self.data.get(['players', 'current']))
+        if 'player' in kwargs:
+            player = kwargs['player']
+        else:
+            player = self.data.get(['players', 'current'])
         return player.get(self.values['variable'])
 
 

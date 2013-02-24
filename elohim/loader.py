@@ -35,7 +35,10 @@ server = server.Server.from_dict(json_loader.from_json(filepath))
 server.add_player('Player', basic_console.ConsolePlayer(name='Player'))
 server.add_player('Bot', pig.PigBot(name='Bot'))
 
+replay = True
 try:
-    server.play()
+    while replay:
+        server.play()
+        replay = bool(input('Wanna play again ? (y/n) ') in ('y', 'yes', 'Y'))
 except (KeyboardInterrupt, EOFError):
     print('Game stopped by user')
