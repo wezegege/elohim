@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from elohim.client.bot import pig
-from elohim.client.ui import basic_console
+from elohim.client.ui.console import basic_console
 
 from elohim import settings
 from elohim.engine import json_loader, server
