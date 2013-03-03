@@ -33,11 +33,11 @@ class If(action.Action):
 
     def play(self):
         if self.values['condition'].evaluate():
-            for action in self.values['iftrue']:
-                action.play()
+            for todo in self.values['iftrue']:
+                todo.play()
         else:
-            for action in self.values['iffalse']:
-                action.play()
+            for todo in self.values['iffalse']:
+                todo.play()
 
 
 class ForeachWhile(action.Action):
@@ -59,8 +59,8 @@ class ForeachWhile(action.Action):
                     break
 
             self.send('playerturn')
-            for action in self.values['actions']:
-                action.play()
+            for todo in self.values['actions']:
+                todo.play()
 
 
 class Sequence(action.Action):
@@ -71,5 +71,5 @@ class Sequence(action.Action):
             ]
 
     def play(self):
-        for action in self.values['actions']:
-            action.play()
+        for todo in self.values['actions']:
+            todo.play()

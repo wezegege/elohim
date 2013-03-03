@@ -197,7 +197,7 @@ def parse_pointer(reference):
             return '<{words}>'.format(words='::'.join(str(word)
                 for word in self.words))
 
-    tokens = re.findall('[\w\d_-]+|[<>]', reference)
+    tokens = re.findall(r'[\w\d_-]+|[<>]', reference)
 
     def parse(tokens):
         result = list()

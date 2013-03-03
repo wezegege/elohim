@@ -9,6 +9,10 @@ from elohim.engine import json_loader, server
 
 import sys
 import logging, logging.config
+try:
+    from six.moves import input
+except ImportError:
+    pass
 
 logging.config.dictConfig(settings.LOGGING)
 
@@ -38,15 +42,16 @@ def run():
 
         filepath = rules[choice - 1]
 
-    server = server.Server.from_dict(json_loader.from_json(filepath))
-    server.add_player('Player', basic_console.ConsolePlayer(name='Player'))
-    server.add_player('Bot', pig.PigBot(name='Bot'))
+    engine = server.Server.from_dict(json_loader.from_json(filepath))
+    engine.add_player('Player', basic_console.ConsolePlayer(name='Player'))
+    engine.add_player('Bot', pig.PigBot(name='Bot'))
 
     replay = True
     try:
         while replay:
-            server.play()
-            replay = bool(input('Wanna play again ? (y/n) ') in ('y', 'yes', 'Y'))
+            engine.play()
+            will_replay = input('Wanna play again ? (y/n) ')
+            replay = bool(will_replay in ('y', 'yes', 'Y'))
     except (KeyboardInterrupt, EOFError):
         print('Game stopped by user')
 

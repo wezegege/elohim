@@ -3,6 +3,11 @@
 
 from elohim.client import ui
 
+try:
+    from six.moves import input
+except ImportError:
+    pass
+
 
 class ConsolePlayer(ui.Ui):
     name = 'console-player'

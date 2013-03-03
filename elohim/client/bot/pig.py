@@ -68,7 +68,7 @@ class PigBot(RandomBot):
                 with open(filename, 'r') as content:
                     for line in content:
                         todo.append([int(value) for value in line.split('\t')])
-            except FileNotFoundError:
+            except IOError:
                 pass
             self.values['todo'] = todo
         current = self.data.get(['players', 'current'])
@@ -100,8 +100,9 @@ class PigBot(RandomBot):
         def action_probs(indexes, p):
             roll = 0.0
             i, j, k = indexes
+            wrong = self.data.get(['dice', 'wrong'])
             for value in range(1, self.values['dice'] + 1):
-                if value in self.wrong:
+                if value in wrong:
                     roll += (1.0 - pwin(p, j, i, 0))
                 else:
                     roll += pwin(p, i, j, k + value)

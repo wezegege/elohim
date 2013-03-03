@@ -15,7 +15,8 @@ class Equals(action.Condition):
     def evaluate(self, **kwargs):
         expressions = self.values['expressions']
         return not expressions or \
-                all(expressions[0].value(**kwargs) == expression.value(**kwargs)
+                all(expressions[0].value(**kwargs) ==
+                        expression.value(**kwargs)
                         for expression in expressions[1:])
 
 

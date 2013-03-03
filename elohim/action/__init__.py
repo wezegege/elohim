@@ -7,7 +7,8 @@ import collections
 
 class NonExistingEntity(Exception):
     def __init__(self, library, name):
-        message = 'Entity not found : {name} in library {library}'.format(name=name, library=library)
+        message = 'Entity not found : {name} in library {library}'.format(
+                name=name, library=library)
         super(NonExistingEntity, self).__init__(message)
 
 
@@ -27,6 +28,7 @@ class Entity(object):
             else:
                 self.values[field] = field_type.default()
         super(Entity, self).__init__(**kwargs)
+        self.data = None
 
         self.init()
 
@@ -57,7 +59,8 @@ class Entity(object):
     def from_dict(cls, rules):
         if not hasattr(cls, 'entities'):
             cls.entities = cls.list_entities()
-        entity = cls.entities.get(rules['library'], dict()).get(rules['name'], None)
+        entity = cls.entities.get(
+                rules['library'], dict()).get(rules['name'], None)
         if entity is None:
             raise NonExistingEntity(rules['library'], rules['name'])
         del rules['library']
@@ -100,9 +103,9 @@ class Expression(Entity):
 
 
 class Condition(Entity):
-    library='condition'
-    name='condition'
-    type='condition'
+    library = 'condition'
+    name = 'condition'
+    type = 'condition'
 
     def evaluate(self, **kwargs):
         return True
