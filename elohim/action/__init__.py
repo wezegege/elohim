@@ -26,7 +26,7 @@ class Entity(object):
                 del kwargs[field]
             else:
                 self.values[field] = field_type.default()
-        super().__init__(**kwargs)
+        super(Entity, self).__init__(**kwargs)
 
         self.init()
 

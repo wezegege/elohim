@@ -130,5 +130,5 @@ class IntegerParameter(Parameter):
     name = 'integer'
 
     def __init__(self, mini=None, maxi=None, **kwargs):
-        super().__init__(**kwargs)
+        super(IntegerParameter, self).__init__(**kwargs)
         self.mini, self.maxi = mini, maxi
