@@ -17,8 +17,8 @@ virtualenv --no-site-packages -p python${version} ${PYENV_HOME}
 source ${PYENV_HOME}/bin/activate
 pip install --quiet -r ${WORKSPACE}/requirements.txt
 case "${version}" in
-    2.*) libraries='nosexcover unittest2';;
-    3.*) libraries='unittest2py3k git+https://github.com/cmheisel/nose-xcover.git';;
+    2*) libraries='nosexcover unittest2';;
+    3*) libraries='unittest2py3k git+https://github.com/cmheisel/nose-xcover.git';;
 esac
 pip install --quiet nose pylint ${libraries}
 python ${WORKSPACE}/setup.py install
