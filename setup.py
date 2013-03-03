@@ -13,7 +13,7 @@ setup(
     classifiers=list(),
     keywords=list(),
     version=__version__,
-    packages=find_packages(),
+    packages=['elohim'],
     test_suite="nose.collector",
     tests_require=['nose', 'coverage', 'mock'],
     extras_require={
