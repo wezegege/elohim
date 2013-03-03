@@ -1,4 +1,0 @@
-pylint
-nose
-git+https://github.com/cmheisel/nose-xcover.git
-unittest2
