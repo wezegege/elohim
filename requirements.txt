@@ -1,11 +1,11 @@
-#urwid
+urwid
 #pysfml
-pyparsing
+#pyparsing
 
 ############
 #tests
 
-coverage
-nose
-mock
-pylint
+#coverage
+#nose
+#mock
+#pylint
