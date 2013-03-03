@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-if [ $# -le 2]; then
+if [ $# -le 2 ]; then
     echo 'Usage : jenkins_tests.sh <workspace> <python version>'
     exit 1
 fi
