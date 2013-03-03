@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import elohim.loader
+from elohim import loader
 
+if __name__ == '__main__':
+    loader.run()
 #from elohim import client
 #import pprint
 #
