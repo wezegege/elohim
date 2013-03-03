@@ -38,7 +38,8 @@ class TurnTotalBot(RandomBot):
                     sum(wrong))
         actual = self.data.get(['players', 'current', 'score', 'temporary'])
         score = self.data.get(['players', 'current', 'score', 'permanent'])
-        if actual + score > self.data.get(['goal']) or actual >= self.values['turntotal']:
+        if (actual + score > self.data.get(['goal']) or
+                actual >= self.values['turntotal']):
             result = 'hold'
         else:
             result = 'roll'
@@ -75,7 +76,8 @@ class PigBot(RandomBot):
 
         score = current.get(['score', 'permanent'])
         try:
-            against = max(player.get(['score', 'permanent']) for player in players if player != current)
+            against = max(player.get(['score', 'permanent'])
+                    for player in players if player != current)
         except ValueError:
             against = 0
         threshold = self.values['todo'][score][against]

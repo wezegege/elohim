@@ -46,5 +46,5 @@ class WhileCurrentTrue(action.Action):
         self.data.set(variable, True)
         while self.data.get(variable):
             self.send('round')
-            for action in self.values['actions']:
-                action.play()
+            for todo in self.values['actions']:
+                todo.play()

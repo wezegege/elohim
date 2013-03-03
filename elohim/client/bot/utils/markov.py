@@ -40,9 +40,11 @@ def value_iteration(sizes, epsilon, action_probs, verbose=False):
         result = 0
         for indexes in loop_dimensions(sizes):
             try:
-                result += math.fabs(get_value(old, indexes) - get_value(new, indexes))
+                result += math.fabs(get_value(old, indexes) -
+                        get_value(new, indexes))
             except (ValueError, TypeError):
-                result += math.fabs(int(get_value(old, indexes) == get_value(new, indexes)))
+                result += math.fabs(int(get_value(old, indexes) ==
+                    get_value(new, indexes)))
         return result
 
     def init_arrays(size, dimensions):

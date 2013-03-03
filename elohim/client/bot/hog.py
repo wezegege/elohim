@@ -13,6 +13,7 @@ class HogBot(pig.RandomBot):
     library = 'pig'
 
     def __init__(self, dice=6, goal=100, wrong=None):
+        super(HogBot, self).__init__()
         self.dice = dice
         self.goal = goal
         self.wrong = [1] if wrong is None else wrong
@@ -29,8 +30,9 @@ class HogBot(pig.RandomBot):
         try:
             with open(self.filename, 'r') as content:
                 for line in content:
-                    self.todo.append([int(value) for value in line.split('\t')])
-        except FileNotFoundError:
+                    self.todo.append([int(value)
+                        for value in line.split('\t')])
+        except IOError:
             pass
 
 
@@ -49,7 +51,8 @@ class HogBot(pig.RandomBot):
             probs = list()
             i, j = indexes
             for k in range(1, max_dice + 1):
-                total_prob = 1 - ((self.dice - len(self.wrong)) / self.dice) ** k
+                total_prob = self.dice - len(self.wrong)
+                total_prob = 1 - (total_prob / self.dice) ** k
                 roll = total_prob * (1 - pwin(p, j, i))
                 for result, prob in dice_probs[k]:
                     roll += prob * (1 - pwin(p, j, i + result))

@@ -15,7 +15,7 @@ class Parameter(Entity):
 
     def __init__(self, default=Unset, mandatory=True):
         self.default_value = default
-        self.mandatory=mandatory
+        self.mandatory = mandatory
 
     def default(self):
         return None if self.default_value is Unset else self.default_value

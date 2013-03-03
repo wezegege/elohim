@@ -21,7 +21,8 @@ class Server(object):
             for field, value in dataset:
                 self.data.set(field, value)
 
-        self.data.refer(['players', 'current'], 'players::list::<players::index>')
+        self.data.refer(['players', 'current'],
+                'players::list::<players::index>')
 
         self.rules.set_data(self.data)
 
@@ -29,7 +30,8 @@ class Server(object):
         index = self.data.get(['players', 'count'])
         self.data.add(['players', 'count'], 1)
         for field, config in self.variables:
-            self.data.getdefault(['players', 'list', index]).configure(field, **config)
+            self.data.getdefault(
+                    ['players', 'list', index]).configure(field, **config)
         for field, value in (
                 ('name', name),
                 ('client', client),
@@ -44,8 +46,10 @@ class Server(object):
         self.rules.play()
 
     def to_dict(self):
-        defaults = {'::'.join(field) : value for field, value in self.data.defaults}
-        settings = {'::'.join(field) : value for field, value in self.data.settings}
+        defaults = {'::'.join(field) : value
+                for field, value in self.data.defaults}
+        settings = {'::'.join(field) : value
+                for field, value in self.data.settings}
         metadata = {
                 'defaults' : defaults,
                 'settings' : settings,
@@ -56,7 +60,9 @@ class Server(object):
     @classmethod
     def from_dict(cls, gamedata):
         rules = action.Entity.from_dict(gamedata['rules'])
-        variables = [(field.split('::'), value) for field, value in gamedata['variables'].items()]
-        settings = [(entry['name'].split('::'), entry['default']) for entry in gamedata['settings']]
+        variables = [(field.split('::'), value)
+                for field, value in gamedata['variables'].items()]
+        settings = [(entry['name'].split('::'), entry['default'])
+                for entry in gamedata['settings']]
         return cls(rules=rules, variables=variables, settings=settings)
 

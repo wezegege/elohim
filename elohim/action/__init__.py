@@ -75,9 +75,9 @@ class Entity(object):
         return result
 
 class Action(Entity):
-    library='action'
-    name='action'
-    type='action'
+    library = 'action'
+    name = 'action'
+    type = 'action'
 
     def play(self):
         pass
@@ -91,9 +91,9 @@ class Action(Entity):
         return current.askplayer(options)
 
 class Expression(Entity):
-    library='expression'
-    name='expression'
-    type='expression'
+    library = 'expression'
+    name = 'expression'
+    type = 'expression'
 
     def value(self, **kwargs):
         return None

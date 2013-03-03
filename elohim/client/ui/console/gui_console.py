@@ -27,6 +27,7 @@ class MainScreen(object):
         footer = urwid.AttrWrap(urwid.Text(self.footer_text), "foot")
         self.frame = urwid.Frame(urwid.AttrWrap(listbox, "body"),
                 footer=footer)
+        self.loop = None
 
     def main(self):
         self.loop = urwid.MainLoop(self.frame, self.palette,
@@ -61,7 +62,7 @@ class MainScreen(object):
         def do_return(_source):
             self.loop.widget = self.frame
 
-        menu = self.make_menu('Options', [
+        self.make_menu('Options', [
             ('Return', do_return),
             ('Quit', do_exit),
             ])

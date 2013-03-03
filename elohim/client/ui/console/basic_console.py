@@ -11,7 +11,8 @@ class ConsolePlayer(ui.Ui):
     def send(self, message, **kwargs):
         if message == 'playerturn':
             self.display_all([(['score', 'permanent'], 'Score')])
-            print("It is {name}'s turn".format(name=self.data.get(['players', 'current', 'name'])))
+            print("It is {name}'s turn".format(
+                name=self.data.get(['players', 'current', 'name'])))
         elif message == 'round':
             self.display_current([
                     (['score', 'permanent'], 'Score'),
@@ -34,9 +35,11 @@ class ConsolePlayer(ui.Ui):
         print('Options :')
         width = max(len(field) for field in options.keys())
         for field, value in options.items():
-            print('  {field:<{width}} : {value}'.format(field=field, width=width, value=value))
+            print('  {field:<{width}} : {value}'.format(
+                field=field, width=width, value=value))
         while True:
-            result = input('Your choice ({choices}) : '.format(choices='|'.join(options.keys())))
+            result = input('Your choice ({choices}) : '.format(
+                choices='|'.join(options.keys())))
             if result in options.keys():
                 return result
 

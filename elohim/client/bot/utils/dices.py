@@ -15,13 +15,15 @@ def dice_probability(size, dice_number, forbidden=None):
         return result
 
     forbidden = list() if forbidden is None else forbidden
-    values = [number for number in range(1, size + 1) if not number in forbidden]
+    values = [number for number in range(1, size + 1)
+            if not number in forbidden]
     probabilities = dict()
     indexes = [(0, 1)]
     for number in range(1, dice_number + 1):
         iteration_probs = iteration(indexes, values)
         total = size ** number
-        probabilities[number] = [(value, count / total) for value, count in iteration_probs.items()]
+        probabilities[number] = [(value, count / total)
+                for value, count in iteration_probs.items()]
         indexes = iteration_probs.items()
     return probabilities
 

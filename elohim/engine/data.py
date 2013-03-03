@@ -28,11 +28,13 @@ def operation(strict=True):
         @functools.wraps(func)
         def wrapper(self, index, *args, **kwargs):
             if self.reference:
-                result = getattr(self.pointee, func.__name__)(index, *args, **kwargs)
+                result = getattr(self.pointee,
+                        func.__name__)(index, *args, **kwargs)
             elif index:
                 index = copy.copy(index)
                 entry = index.pop(0)
-                result = getattr(self.getitem(entry, strict), func.__name__)(index, *args, **kwargs)
+                result = getattr(self.getitem(entry, strict),
+                        func.__name__)(index, *args, **kwargs)
             else:
                 result = func(self, *args, **kwargs)
             return result
@@ -65,20 +67,22 @@ class Entry(object):
         self.visibility = kwargs.get('visibility', Visibility.All)
         self.subentries = dict()
         self.handlers = list()
+        self.pointee = None
 
     @modifier
     def initialize(self):
         if not self.reference:
             if not self.default is self.Unset:
                 self.content = self.default
-            for field, entry in self.subentries.items():
+            for _, entry in self.subentries.items():
                 entry.initialize()
 
     @operation(strict=False)
     def refer(self, reference):
         self.reference = parse_pointer(reference)
-        for modifier in self.reference.modifiers():
-            self.root.add_handler(modifier, lambda _ : True, self.update_pointee)
+        for pointer in self.reference.modifiers():
+            self.root.add_handler(pointer, lambda _ : True,
+                    self.update_pointee)
         self.update_pointee(None)
 
     def update_pointee(self, _value):
@@ -190,7 +194,8 @@ def parse_pointer(reference):
             return result
 
         def __str__(self):
-            return '<{words}>'.format(words='::'.join(str(word) for word in self.words))
+            return '<{words}>'.format(words='::'.join(str(word)
+                for word in self.words))
 
     tokens = re.findall('[\w\d_-]+|[<>]', reference)
 
