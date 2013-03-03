@@ -14,10 +14,6 @@ logging.config.dictConfig(settings.LOGGING)
 
 
 def run():
-    """
-    >>> 1 + 1
-    2
-    """
     rules = json_loader.json_files(settings.DATAPATH)
     if not rules:
         print('No game found')
