@@ -97,6 +97,8 @@ class TestParsePointer(unittest2.TestCase):
         self.assertEquals(str(result), '<test::something>')
         result(root)
         root.get.assert_called_once_with(['test', 'something'])
+        modifiers = result.modifiers()
+        self.assertIn(['test', 'something'], modifiers)
 
     def test_reference(self):
         root = mock.Mock()
@@ -107,6 +109,8 @@ class TestParsePointer(unittest2.TestCase):
         root.get.assert_any_call(['test', 'inner'])
         root.get.assert_called_with(['test', 'outer'])
         self.assertEquals(root.get.call_count, 2)
+        modifiers = result.modifiers()
+        self.assertIn(['test', 'inner'], modifiers)
 
     def test_double_reference(self):
         def entry_get(key):
@@ -126,6 +130,8 @@ class TestParsePointer(unittest2.TestCase):
         root.get.assert_any_call(['test', 'two'])
         root.get.assert_called_with(['test', 'one'])
         self.assertEquals(root.get.call_count, 3)
+        modifiers = result.modifiers()
+        self.assertIn(['test', 'three'], modifiers)
 
 
 
