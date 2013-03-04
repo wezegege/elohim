@@ -59,12 +59,14 @@ class TestModifier(unittest2.TestCase):
                     ]
 
             nomodification = mock.Mock()
+            nomodification.__name__ = 'nomodification'
             wrapped_nomodif = data.modifier(nomodification)
 
             def domodification(self):
                 self.content = True
 
             mocked_modif = mock.Mock(wraps=domodification)
+            mocked_modif.__name__ = 'mocked_modif'
             wrapped_modif = data.modifier(mocked_modif)
 
         self.ModifierTester = ModifierTester
