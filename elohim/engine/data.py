@@ -203,6 +203,8 @@ class Entry(object):
 
     @operation(strict=False)
     def getentry(self):
+        """Return the entry corresponding to the index
+        """
         return self
 
     @operation()

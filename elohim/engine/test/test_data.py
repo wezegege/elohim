@@ -149,12 +149,18 @@ class TestEntry(unittest2.TestCase):
         entry.set(list(), True)
         self.assertEquals(entry.get(list()), True)
 
+    def test_add(self):
+        entry = data.Entry(content=1)
+        entry.add(list(), 1)
+        self.assertEquals(entry.get(list()), 2)
+
     def test_initialize(self):
-        entry = data.Entry(content=False, default=True)
-        self.assertEquals(entry.get(list()), False)
-        self.assertEquals(entry.default, True)
+        entry = data.Entry()
+        entry.set(['one'], False)
+        entry.configure(['one'], default=True)
+        self.assertEquals(entry.get(['one']), False)
         entry.initialize()
-        self.assertEquals(entry.get(list()), True)
+        self.assertEquals(entry.get(['one']), True)
 
     def test_configure(self):
         entry = data.Entry(content=False, default=True)
@@ -179,6 +185,11 @@ class TestEntry(unittest2.TestCase):
         self.assertEquals(entry.get(['referee', 'value']), True)
         entry.refer(['reference'], 'referee')
         self.assertEquals(entry.get(['reference', 'value']), True)
+
+    def test_refer_wrong(self):
+        entry = data.Entry()
+        entry.refer(['reference'], 'referee')
+        self.assertEquals(entry.getentry(['reference']).pointee, None)
 
     def test_refer_update(self):
         entry = data.Entry()
