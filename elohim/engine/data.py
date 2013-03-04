@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Module handling the different informations for a game to occur
+"""
 
 import copy
 import re
@@ -7,26 +9,49 @@ import functools
 
 
 class Visibility(object):
+    """Handle whether the different players and spectators will see
+    a given information
+    """
     class All(object):
+        """Everyone will see the information
+        """
         pass
 
     class Player(object):
+        """Only owner player will see the information
+        """
         pass
 
     class TeamMembers(object):
+        """Only owner player and the members of his team will see
+        """
         pass
 
     class Opponents(object):
+        """Only opponents of owner player will see
+        """
         pass
 
     class Nobody(object):
+        """No one can see the information
+        """
         pass
 
 
 def operation(strict=True):
+    """Decorator to handle the entries as a tree.
+
+    Entries are seen as a tree, and the goal entry is designated
+    with a list of keys. This decorator assures the finding of
+    the good entry before the operation is done
+    """
     def decorator(func):
+        """The actual decorator with a parameter `strict`
+        """
         @functools.wraps(func)
         def wrapper(self, index, *args, **kwargs):
+            """Wrapper function to be used instead of original one
+            """
             if self.reference:
                 result = getattr(self.pointee,
                         func.__name__)(index, *args, **kwargs)

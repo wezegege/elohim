@@ -20,7 +20,7 @@ case "${version}" in
     2*) libraries='nosexcover unittest2';;
     3*) libraries='unittest2py3k git+https://github.com/cmheisel/nose-xcover.git';;
 esac
-pip install --quiet nose pylint ${libraries}
+pip install --quiet nose pylint mock ${libraries}
 python ${WORKSPACE}/setup.py install
 pylint -f parseable elohim | tee pylint.out
 nosetests --with-xcoverage --with-xunit --cover-package=elohim --cover-erase --with-doctest
