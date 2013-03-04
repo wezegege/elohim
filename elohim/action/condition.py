@@ -12,7 +12,7 @@ class Equals(action.Condition):
             ('expressions', parameter.ExpressionList()),
             ]
 
-    def evaluate(self, **_kwargs):
+    def evaluate(self, **kwargs):
         expressions = self.values['expressions']
         return not expressions or \
                 all(expressions[0].value(**kwargs) ==
@@ -28,7 +28,7 @@ class GreaterEquals(action.Condition):
             ('right', parameter.ExpressionParameter()),
             ]
 
-    def evaluate(self, **_kwargs):
+    def evaluate(self, **kwargs):
         left = self.values['left'].value(**kwargs)
         right = self.values['right'].value(**kwargs)
         return bool(left >= right)
