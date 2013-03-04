@@ -281,6 +281,11 @@ def parse_pointer(reference):
             return repr(self.words)
 
         def modifiers(self):
+            """Compute modifiers of a pointer
+
+            A modifier is an entry in the data tree which value may
+            change which entry is pointed by this reference
+            """
             result = list()
             if all(isinstance(word, Word) for word in self.words):
                 result = [[str(word) for word in self.words]]
