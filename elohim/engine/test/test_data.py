@@ -47,5 +47,83 @@ class TestOperation(unittest2.TestCase):
         decorated.pointee.operation.assert_called_with(list())
 
 
+class TestModifier(unittest2.TestCase):
+    def setUp(self):
+        class ModifierTester(object):
+            content = False
+            true_handler = mock.Mock()
+            false_handler = mock.Mock()
+            handlers = [
+                    (lambda _: True, true_handler),
+                    (lambda _: False, false_handler),
+                    ]
+
+            nomodification = mock.Mock()
+            wrapped_nomodif = data.modifier(nomodification)
+
+            def domodification(self):
+                self.content = True
+
+            mocked_modif = mock.Mock(wraps=domodification)
+            wrapped_modif = data.modifier(mocked_modif)
+
+        self.ModifierTester = ModifierTester
+
+    def test_no_modification(self):
+        decorated = self.ModifierTester()
+        self.assertEquals(decorated.content, False)
+        decorated.wrapped_nomodif()
+        self.assertEquals(decorated.content, False)
+        self.assertTrue(decorated.nomodification.called)
+        self.assertFalse(decorated.true_handler.called)
+        self.assertFalse(decorated.false_handler.called)
+
+    def test_with_modifications(self):
+        decorated = self.ModifierTester()
+        self.assertEquals(decorated.content, False)
+        decorated.wrapped_modif()
+        self.assertEquals(decorated.content, True)
+        self.assertTrue(decorated.mocked_modif.called)
+        self.assertTrue(decorated.true_handler.called)
+        self.assertFalse(decorated.false_handler.called)
+
+
+class TestParsePointer(unittest2.TestCase):
+    def test_simple(self):
+        root = mock.Mock()
+        result = data.parse_pointer('test::something')
+        self.assertEquals(str(result), '<test::something>')
+        result(root)
+        root.get.assert_called_once_with(['test', 'something'])
+
+    def test_reference(self):
+        root = mock.Mock()
+        root.get = mock.Mock(return_value='outer')
+        result = data.parse_pointer('test::<test::inner>')
+        self.assertEquals(str(result), '<test::<test::inner>>')
+        self.assertEquals(result(root), 'outer')
+        root.get.assert_any_call(['test', 'inner'])
+        root.get.assert_called_with(['test', 'outer'])
+        self.assertEquals(root.get.call_count, 2)
+
+    def test_double_reference(self):
+        def entry_get(key):
+            if key == ['test', 'three']:
+                return 'two'
+            elif key == ['test', 'two']:
+                return 'one'
+            else:
+                return 'zero'
+
+        root = mock.Mock()
+        root.get = mock.Mock(wraps=entry_get)
+        result = data.parse_pointer('test::<test::<test::three>>')
+        self.assertEquals(str(result), '<test::<test::<test::three>>>')
+        self.assertEquals(result(root), 'zero')
+        root.get.assert_any_call(['test', 'three'])
+        root.get.assert_any_call(['test', 'two'])
+        root.get.assert_called_with(['test', 'one'])
+        self.assertEquals(root.get.call_count, 3)
+
 
 
