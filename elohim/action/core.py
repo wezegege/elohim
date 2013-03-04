@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Core actions for most games
+"""
 
 from elohim import action
 from elohim.action import parameter
 
 
 class SetWinner(action.Action):
+    """Determine the winner through some criteria
+    """
     library = 'core'
     name = 'set-winner'
     parameters = [
@@ -23,6 +27,8 @@ class SetWinner(action.Action):
 
 
 class If(action.Action):
+    """Launch actions depending on a condition evaluation
+    """
     library = 'core'
     name = 'if'
     parameters = [
@@ -41,6 +47,8 @@ class If(action.Action):
 
 
 class ForeachWhile(action.Action):
+    """Iterate through players until a condition is met
+    """
     library = 'core'
     name = 'foreach-while'
     parameters = [
@@ -64,6 +72,8 @@ class ForeachWhile(action.Action):
 
 
 class Sequence(action.Action):
+    """List of action to run sequentially
+    """
     library = 'core'
     name = 'sequence'
     parameters = [

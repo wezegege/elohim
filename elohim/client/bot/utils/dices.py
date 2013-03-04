@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""AI utilities for dice-related computings
+"""
 
 
 def dice_probability(size, dice_number, forbidden=None):
+    """Compute the different possibles outcomes for a set of dices
+    which size is given
+    """
     def iteration(previous, values):
+        """Iterative function used to compute the distinct outcomes
+        """
         result = dict()
         for value, count in previous:
             for index in values:

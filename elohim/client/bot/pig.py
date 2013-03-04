@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Some bot client for the dice game pig
+"""
 
 from elohim.client import bot
 from elohim.client.bot.utils import markov
@@ -11,18 +13,21 @@ import random
 
 
 class RandomBot(bot.Bot):
+    """Bot which plays randomly the game pig
+    """
     name = 'random-bot'
     library = 'pig'
 
-    def send(self, message, **kwargs):
-        pass
-
     def askplayer(self, options):
+        """Receive a server question and answer randomly
+        """
         result = random.choice(list(options.keys()))
         return result
 
 
-class TurnTotalBot(RandomBot):
+class TurnTotalBot(bot.Bot):
+    """Bot which will aim for a certain score each turn before holding
+    """
     name = 'turn-total-bot'
     library = 'pig'
     parameters = [
@@ -30,7 +35,9 @@ class TurnTotalBot(RandomBot):
                 mini=1, maxi=100, mandatory=False)),
             ]
 
-    def askplayer(self, options):
+    def askplayer(self, _options):
+        """Roll while the turn total is below given threshold
+        """
         if not self.values['turntotal']:
             dice = self.data.get(['dice', 'size'])
             wrong = self.data.get(['dice', 'wrong'])
@@ -47,10 +54,15 @@ class TurnTotalBot(RandomBot):
 
 
 class PigBot(RandomBot):
+    """Advanced pig bot based on game theory
+    """
     name = 'pig-bot'
     library = 'pig'
 
     def askplayer(self, options):
+        """Will play optimal game given the markov process applied to the
+        pig game
+        """
         if not 'todo' in self.values:
             filename = 'pig_d{dice}w{wrong}g{goal}.txt'.format(
                     dice=self.data.get(['dice', 'size']),
@@ -87,29 +99,36 @@ class PigBot(RandomBot):
         return result
 
     def optimal(self, epsilon=10**-9):
+        """Compute optimal play for pig game
+        """
         goal = self.values['goal']
 
-        def pwin(p, i, j, k):
+        def pwin(probabilities, i, j, k):
+            """Probability of winning for a given situation
+            """
             if i + k >= goal:
                 return 1.0
             elif j >= goal:
                 return 0.0
             else:
-                return p[i][j][k]
+                return probabilities[i][j][k]
 
-        def action_probs(indexes, p):
+        def action_probs(indexes, probabilities):
+            """Compute the probability of winning for the different
+            possibles actions
+            """
             roll = 0.0
             i, j, k = indexes
             wrong = self.data.get(['dice', 'wrong'])
             for value in range(1, self.values['dice'] + 1):
                 if value in wrong:
-                    roll += (1.0 - pwin(p, j, i, 0))
+                    roll += (1.0 - pwin(probabilities, j, i, 0))
                 else:
-                    roll += pwin(p, i, j, k + value)
+                    roll += pwin(probabilities, i, j, k + value)
             roll /= self.values['dice']
             return [
                     (True, roll),
-                    (False, 1 - pwin(p, j, i + k, 0)),
+                    (False, 1 - pwin(probabilities, j, i + k, 0)),
                     ]
 
         values = markov.value_iteration([

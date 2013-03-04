@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""UI console using urwid library
+"""
 
 try:
     import urwid
@@ -9,6 +11,8 @@ except ImportError:
 
 
 class MainScreen(object):
+    """Main user interface, which will contain menus plus games
+    """
     palette = [
             ("body", "default", "default"),
             ("foot", "dark cyan", "dark blue", "bold"),
@@ -30,11 +34,15 @@ class MainScreen(object):
         self.loop = None
 
     def main(self):
+        """Run main loop
+        """
         self.loop = urwid.MainLoop(self.frame, self.palette,
                 unhandled_input=self.unhandled_input)
         self.loop.run()
 
     def make_menu(self, title, choices):
+        """Create a main screen menu
+        """
         body = [urwid.Text(title), urwid.Divider()]
         for choice, action in choices:
             button = urwid.Button(choice)
@@ -56,10 +64,16 @@ class MainScreen(object):
 
 
     def main_menu(self):
+        """Create the main menu
+        """
         def do_exit(_source):
+            """callback for quitting program
+            """
             raise urwid.ExitMainLoop()
 
         def do_return(_source):
+            """callback for closing menu
+            """
             self.loop.widget = self.frame
 
         self.make_menu('Options', [
@@ -68,6 +82,8 @@ class MainScreen(object):
             ])
 
     def unhandled_input(self, key):
+        """Handle main screen menu
+        """
         if key == "f1":
             self.main_menu()
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Markov algorithms for AI computing
+"""
 
 import copy
 import sys
@@ -7,29 +9,39 @@ import math
 
 
 def value_iteration(sizes, epsilon, action_probs, verbose=False):
+    """Variant of the Markov process to compute probabilities
+    """
 
     def loop_dimensions(sizes):
+        """Iterate through the differents axis of the problem
+        """
         dimensions = list(reversed(sizes))
         def iterate(dimensions, parents=None):
+            """Iterative function to loop through the dimensions
+            """
             parents = list() if parents is None else parents
-            for a in range(dimensions[0](*parents)):
+            for i in range(dimensions[0](*parents)):
                 if len(dimensions) > 1:
                     for indexes in iterate(dimensions[1:],
-                            parents + [a]):
-                        yield [a] + indexes
+                            parents + [i]):
+                        yield [i] + indexes
                 else:
-                    yield [a]
+                    yield [i]
 
         for indexes in iterate(dimensions):
             yield indexes
 
     def get_value(container, indexes):
+        """Get value for a field of the state matrix
+        """
         result = container
         for index in indexes:
             result = result[index]
         return result
 
     def set_value(container, indexes, value):
+        """Set value for a field of the state matrix
+        """
         result = container
         for index in indexes[:-1]:
             result = result[index]
@@ -37,6 +49,9 @@ def value_iteration(sizes, epsilon, action_probs, verbose=False):
         return result
 
     def compute_diffs(sizes, old, new):
+        """Measure the distance between the state matrix before and after
+        an iteration
+        """
         result = 0
         for indexes in loop_dimensions(sizes):
             try:
@@ -48,20 +63,22 @@ def value_iteration(sizes, epsilon, action_probs, verbose=False):
         return result
 
     def init_arrays(size, dimensions):
+        """Initialize the state matrix
+        """
         if dimensions:
-            p = list()
+            probabilities = list()
             interest = list()
-            for a in range(size):
+            for _ in range(size):
                 subp, subinterest = init_arrays(size, dimensions - 1)
-                p.append(subp)
+                probabilities.append(subp)
                 interest.append(subinterest)
         else:
-            p = [0.0] * size
+            probabilities = [0.0] * size
             interest = [None] * size
-        return p, interest
+        return probabilities, interest
 
 
-    p, interest = init_arrays(sizes[0](), len(sizes) - 1)
+    probabilities, interest = init_arrays(sizes[0](), len(sizes) - 1)
 
     if verbose:
         iterations = 0
@@ -80,10 +97,10 @@ def value_iteration(sizes, epsilon, action_probs, verbose=False):
         max_change = 0.0
 
         for indexes in loop_dimensions(sizes):
-            old_prob = get_value(p, indexes)
-            probs = action_probs(indexes, p)
+            old_prob = get_value(probabilities, indexes)
+            probs = action_probs(indexes, probabilities)
             best_action, best_prob = max(probs, key=lambda x: x[1])
-            set_value(p, indexes, best_prob)
+            set_value(probabilities, indexes, best_prob)
             set_value(interest, indexes, best_action)
             max_change = max(max_change, math.fabs(best_prob - old_prob))
     return interest

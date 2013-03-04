@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Server for the engine based on turn-based rules
+"""
 
 from elohim.engine import data
 from elohim import action
 
 class Server(object):
+    """Server for the engine based on turn-based rules
+    """
     def __init__(self, **kwargs):
         self.rules = kwargs['rules']
         self.player_data = self.rules.player_data()
@@ -27,6 +31,11 @@ class Server(object):
         self.rules.set_data(self.data)
 
     def add_player(self, name, client):
+        """Subscribe a new player to the party
+
+        :param name: login name of the player, used as an ID
+        :param client: the client object to communicate with the player
+        """
         index = self.data.get(['players', 'count'])
         self.data.add(['players', 'count'], 1)
         for field, config in self.variables:
@@ -42,10 +51,14 @@ class Server(object):
         client.set_data(self.data)
 
     def play(self):
+        """Launch a single game
+        """
         self.data.initialize()
         self.rules.play()
 
     def to_dict(self):
+        """Represent the internal state of the server as a python dictionnary
+        """
         metadata = {
                 'rules' : self.rules.to_dict(),
                 }
@@ -53,6 +66,10 @@ class Server(object):
 
     @classmethod
     def from_dict(cls, gamedata):
+        """Create a server from a python dictionnary
+
+        The dictionnary must define the entries 'rules', 'variables' and 'settings'
+        """
         rules = action.Entity.from_dict(gamedata['rules'])
         variables = [(field.split('::'), value)
                 for field, value in gamedata['variables'].items()]

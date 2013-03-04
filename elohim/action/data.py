@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Data tree manipulation actions
+"""
 
 from elohim import action
 from elohim.action import parameter
 
 
 class TransferCurrent(action.Action):
+    """Transfer value of a field to another, and reset it
+    """
     library = 'data'
     name = 'tranfer-current'
     parameters = [
@@ -21,6 +25,8 @@ class TransferCurrent(action.Action):
 
 
 class SetCurrent(action.Action):
+    """Set given field to current player
+    """
     library = 'data'
     name = 'set-current'
     parameters = [
@@ -34,6 +40,8 @@ class SetCurrent(action.Action):
 
 
 class WhileCurrentTrue(action.Action):
+    """Launch actions until a criteria evaluates as false
+    """
     library = 'data'
     name = 'while-current-true'
     parameters = [

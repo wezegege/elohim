@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Library for handling interactions with player
+"""
 
 from elohim.action import Action
 from elohim.action.parameter import PlayerData, ValueParameter
 
 
 class AskPlayer(Action):
+    """Meet current player with choices
+    """
     library = 'input'
     name = 'ask-player'
     parameters = [

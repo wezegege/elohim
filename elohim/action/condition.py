@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Rule library for conditions
+"""
+
 
 from elohim import action
 from elohim.action import parameter
 
 
 class Equals(action.Condition):
+    """Equality condition
+    """
     library = 'condition'
     name = 'equals'
     parameters = [
@@ -21,6 +26,8 @@ class Equals(action.Condition):
 
 
 class GreaterEquals(action.Condition):
+    """Greater of equals condition
+    """
     library = 'condition'
     name = 'greater-equals'
     parameters = [
@@ -35,6 +42,8 @@ class GreaterEquals(action.Condition):
 
 
 class Greater(action.Condition):
+    """Greater condition
+    """
     library = 'condition'
     name = 'greater'
     parameters = [
@@ -49,6 +58,9 @@ class Greater(action.Condition):
 
 
 class In(action.Condition):
+    """Condition which, given an item and a sequence, determines if the item
+    is contained by the container
+    """
     library = 'condition'
     name = 'in'
     parameters = [
@@ -62,6 +74,8 @@ class In(action.Condition):
         return element in container
 
 class All(action.Condition):
+    """Condition which is evaluated for all players
+    """
     library = 'condition'
     name = 'all'
     parameters = [
