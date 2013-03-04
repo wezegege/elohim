@@ -201,6 +201,10 @@ class Entry(object):
         else:
             return self.content
 
+    @operation(strict=False)
+    def getentry(self):
+        return self
+
     @operation()
     @modifier
     def add(self, value):
@@ -259,7 +263,7 @@ def parse_pointer(reference):
         def __init__(self, word):
             self.word = word
 
-        def __call__(self, _root):
+        def __call__(self, _root, top=None):
             return self.word
 
         def __repr__(self):
@@ -274,26 +278,27 @@ def parse_pointer(reference):
         def __init__(self, words):
             self.words = words
 
-        def __call__(self, root):
-            return root.get([word(root) for word in self.words])
+        def __call__(self, root, top=True):
+            field = [word(root, top=False) for word in self.words]
+            return root.getentry(field) if top else root.get(field)
 
         def __repr__(self):
             return repr(self.words)
 
-        def modifiers(self):
+        def modifiers(self, top=True):
             """Compute modifiers of a pointer
 
             A modifier is an entry in the data tree which value may
             change which entry is pointed by this reference
             """
-            result = list()
             if all(isinstance(word, Word) for word in self.words):
-                result = [[str(word) for word in self.words]]
+                if not top:
+                    yield [str(word) for word in self.words]
             else:
                 for word in self.words:
                     if isinstance(word, Reference):
-                        result.extend(word.modifiers())
-            return result
+                        for entry in word.modifiers(top=False):
+                            yield entry
 
         def __str__(self):
             return '<{words}>'.format(words='::'.join(str(word)

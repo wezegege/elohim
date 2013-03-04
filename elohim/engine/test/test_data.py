@@ -96,42 +96,97 @@ class TestParsePointer(unittest2.TestCase):
         result = data.parse_pointer('test::something')
         self.assertEquals(str(result), '<test::something>')
         result(root)
-        root.get.assert_called_once_with(['test', 'something'])
+        root.getentry.assert_called_once_with(['test', 'something'])
         modifiers = result.modifiers()
-        self.assertIn(['test', 'something'], modifiers)
+        self.assertFalse(list(modifiers), list())
 
     def test_reference(self):
         root = mock.Mock()
         root.get = mock.Mock(return_value='outer')
+        root.getentry = mock.Mock(return_value='result')
         result = data.parse_pointer('test::<test::inner>')
         self.assertEquals(str(result), '<test::<test::inner>>')
-        self.assertEquals(result(root), 'outer')
-        root.get.assert_any_call(['test', 'inner'])
-        root.get.assert_called_with(['test', 'outer'])
-        self.assertEquals(root.get.call_count, 2)
+        self.assertEquals(result(root), 'result')
+        root.get.assert_called_once_with(['test', 'inner'])
+        root.getentry.assert_called_once_with(['test', 'outer'])
         modifiers = result.modifiers()
         self.assertIn(['test', 'inner'], modifiers)
 
     def test_double_reference(self):
         def entry_get(key):
-            if key == ['test', 'three']:
-                return 'two'
-            elif key == ['test', 'two']:
-                return 'one'
-            else:
-                return 'zero'
+            return 'two' if key == ['test', 'three'] else 'one'
 
         root = mock.Mock()
         root.get = mock.Mock(wraps=entry_get)
+        root.getentry = mock.Mock(return_value='zero')
         result = data.parse_pointer('test::<test::<test::three>>')
         self.assertEquals(str(result), '<test::<test::<test::three>>>')
         self.assertEquals(result(root), 'zero')
         root.get.assert_any_call(['test', 'three'])
-        root.get.assert_any_call(['test', 'two'])
-        root.get.assert_called_with(['test', 'one'])
-        self.assertEquals(root.get.call_count, 3)
+        root.get.assert_called_with(['test', 'two'])
+        root.getentry.assert_called_with(['test', 'one'])
+        self.assertEquals(root.get.call_count, 2)
         modifiers = result.modifiers()
         self.assertIn(['test', 'three'], modifiers)
 
 
+class TestEntry(unittest2.TestCase):
+    def test_get(self):
+        entry = data.Entry(content=True)
+        self.assertEquals(entry.get(list()), True)
+
+    def test_getdefault(self):
+        entry = data.Entry(content=True)
+        self.assertRaises(KeyError, entry.get, ['subentry'])
+        result = entry.getdefault(['subentry'])
+        self.assertTrue(isinstance(result, data.Entry))
+        result = entry.get(['subentry'])
+        self.assertTrue(isinstance(result, data.Entry))
+
+    def test_set(self):
+        entry = data.Entry(content=False)
+        self.assertEquals(entry.get(list()), False)
+        entry.set(list(), True)
+        self.assertEquals(entry.get(list()), True)
+
+    def test_initialize(self):
+        entry = data.Entry(content=False, default=True)
+        self.assertEquals(entry.get(list()), False)
+        self.assertEquals(entry.default, True)
+        entry.initialize()
+        self.assertEquals(entry.get(list()), True)
+
+    def test_configure(self):
+        entry = data.Entry(content=False, default=True)
+        self.assertEquals(entry.get(list()), False)
+        self.assertEquals(entry.default, True)
+        entry.reset(list())
+        self.assertEquals(entry.get(list()), True)
+        entry.configure(list(), default=False)
+        entry.reset(list())
+        self.assertEquals(entry.get(list()), False)
+
+    def test_refer(self):
+        entry = data.Entry()
+        entry.set(['referee'], True)
+        self.assertEquals(entry.get(['referee']), True)
+        entry.refer(['reference'], 'referee')
+        self.assertEquals(entry.get(['reference']), True)
+
+    def test_refer_sub(self):
+        entry = data.Entry()
+        entry.set(['referee', 'value'], True)
+        self.assertEquals(entry.get(['referee', 'value']), True)
+        entry.refer(['reference'], 'referee')
+        self.assertEquals(entry.get(['reference', 'value']), True)
+
+    def test_refer_update(self):
+        entry = data.Entry()
+        entry.set(['modifier'], 'one')
+        entry.set(['one'], False)
+        entry.set(['two'], True)
+        entry.refer(['reference'], '<modifier>')
+        self.assertEquals(entry.get(['reference']), False)
+        entry.set(['modifier'], 'two')
+        self.assertEquals(entry.get(['reference']), True)
 
