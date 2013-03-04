@@ -13,14 +13,15 @@ class Parameter(Entity):
     name = 'parameter'
     type = 'parameter'
 
-    def __init__(self, default=Unset, mandatory=True):
+    def __init__(self, default=Unset, mandatory=True, **kwargs):
+        super(Parameter, self).__init__(**kwargs)
         self.default_value = default
         self.mandatory = mandatory
 
     def default(self):
         return None if self.default_value is Unset else self.default_value
 
-    def player_data(self, value):
+    def player_data(self, _value):
         return list()
 
     def set_data(self, _value, _data):

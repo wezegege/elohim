@@ -46,13 +46,7 @@ class Server(object):
         self.rules.play()
 
     def to_dict(self):
-        defaults = {'::'.join(field) : value
-                for field, value in self.data.defaults}
-        settings = {'::'.join(field) : value
-                for field, value in self.data.settings}
         metadata = {
-                'defaults' : defaults,
-                'settings' : settings,
                 'rules' : self.rules.to_dict(),
                 }
         return metadata

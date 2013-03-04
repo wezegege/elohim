@@ -98,7 +98,7 @@ class Expression(Entity):
     name = 'expression'
     type = 'expression'
 
-    def value(self, **kwargs):
+    def value(self, **_kwargs):
         return None
 
 
@@ -107,6 +107,6 @@ class Condition(Entity):
     name = 'condition'
     type = 'condition'
 
-    def evaluate(self, **kwargs):
+    def evaluate(self, **_kwargs):
         return True
 

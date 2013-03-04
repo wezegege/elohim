@@ -61,7 +61,7 @@ def operation(strict=True):
                 result = getattr(self.getitem(entry, strict),
                         func.__name__)(index, *args, **kwargs)
             else:
-                result = func(self, *args, **kwargs)
+                result = func(self, None, *args, **kwargs)
             return result
         return wrapper
     return decorator
@@ -131,7 +131,7 @@ class Entry(object):
                 entry.initialize()
 
     @operation(strict=False)
-    def refer(self, reference):
+    def refer(self, _index, reference):
         """Ask this entry to refer to another
 
         Also add a handler to modifiers of the reference, to be
@@ -154,14 +154,14 @@ class Entry(object):
             self.pointee = None
 
     @operation()
-    def add_handler(self, condition, handler):
+    def add_handler(self, _index, condition, handler):
         """Add a function which will be called whenever the content
         of this entry changes
         """
         self.handlers.append((condition, handler))
 
     @operation(strict=False)
-    def configure(self, **kwargs):
+    def configure(self, _index, **kwargs):
         """Change settings for this entry, like the default value, or
         the visibility
         """
@@ -173,21 +173,21 @@ class Entry(object):
 
     @operation()
     @modifier
-    def reset(self):
+    def reset(self, _index):
         """Set the content to default value
         """
         if not self.default is self.Unset:
             self.content = self.default
 
     @operation()
-    def get(self):
+    def get(self, _index):
         """Get the value of the entry. Raise an error if entry does
         not exist
         """
         return self.doget()
 
     @operation(strict=False)
-    def getdefault(self):
+    def getdefault(self, _index):
         """Get the value of the entry. Create an entry if does not exist
         """
         return self.doget()
@@ -202,14 +202,14 @@ class Entry(object):
             return self.content
 
     @operation(strict=False)
-    def getentry(self):
+    def getentry(self, _index):
         """Return the entry corresponding to the index
         """
         return self
 
     @operation()
     @modifier
-    def add(self, value):
+    def add(self, _index, value):
         """Add `value` to current content
         """
         self.content += value
@@ -217,7 +217,7 @@ class Entry(object):
 
     @operation(strict=False)
     @modifier
-    def set(self, value):
+    def set(self, _index, value):
         """Set content to `value`
         """
         self.content = value

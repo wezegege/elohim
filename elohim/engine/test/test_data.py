@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# pylint: disable-msg=C0111,R0904,R0903
+
 
 from elohim.engine import data
 
@@ -19,6 +21,7 @@ class TestOperation(unittest2.TestCase):
             operation = mock.Mock()
             operation.__name__ = 'operation'
             deco_operation = data.operation(strict=True)(operation)
+        # pylint : disable-msg=C0103
         self.OperationTester = OperationTester
 
     def test_direct(self):
@@ -49,6 +52,7 @@ class TestOperation(unittest2.TestCase):
 
 class TestModifier(unittest2.TestCase):
     def setUp(self):
+        #pylint : disable-msg=C0103
         class ModifierTester(object):
             content = False
             true_handler = mock.Mock()
@@ -137,10 +141,11 @@ class TestEntry(unittest2.TestCase):
 
     def test_getdefault(self):
         entry = data.Entry(content=True)
-        self.assertRaises(KeyError, entry.get, ['subentry'])
-        result = entry.getdefault(['subentry'])
+        key = ['subentry']
+        self.assertRaises(KeyError, entry.get, key)
+        result = entry.getdefault(key)
         self.assertTrue(isinstance(result, data.Entry))
-        result = entry.get(['subentry'])
+        result = entry.get(key)
         self.assertTrue(isinstance(result, data.Entry))
 
     def test_set(self):
