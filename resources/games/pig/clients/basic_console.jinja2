@@ -1,0 +1,29 @@
+{% block playerturn %}
+{{ display_all('score::permanent') }}
+{% trans name=root.get(['players', 'current', 'name']) %}
+playerturn {{ name }}
+{% endtrans %}
+{% endblock %}
+
+{% block round %}
+{{ display_one('score::permanent', 'score::temporary')
+{% endblock %}
+
+{% block winner %}
+{{ display_all('score::permanent') }}
+{% trans name=name %}
+winner {{ name }}
+{% endtrans %}
+{% endblock %}
+
+{% block roll %}
+{% trans name=name, roll=roll %}
+roll {{ name }} {{ roll }}
+{% endtrans %}
+{% endblock %}
+
+{% block choice %}
+{% trans name=name, choice=choice %}
+choice {{ name }} {{ choice }}
+{% endtrans %}
+{% endblock %}
