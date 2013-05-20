@@ -1,21 +1,21 @@
-{% block playerturn %}
-{{ display_all('score::permanent') }}
-{% trans name=name %}playerturn {{ name }}{% endtrans %}
-{% endblock %}
+{% macro playerturn() %}
+{{ display_all(['score', 'permanent']) }}
+{% trans name=data.players.current.name %}playerturn {{ name }}{% endtrans %}
+{% endmacro %}
 
-{% block round %}
-{{ display_one('score::permanent', 'score::temporary') }}
-{% endblock %}
+{% macro round() %}
+{{ display_current(['score', 'permanent'], ['score', 'temporary']) }}
+{% endmacro %}
 
-{% block winner %}
-{{ display_all('score::permanent') }}
-{% trans name=name %}winner {{ name }}{% endtrans %}
-{% endblock %}
+{% macro winner(name) %}
+{{ display_all(['score', 'permanent']) }}
+{% trans name %}winner {{ name }}{% endtrans %}
+{% endmacro %}
 
-{% block roll %}
+{% macro diceroll(name, roll) %}
 {% trans name=name, roll=roll %}roll {{ name }} {{ roll }}{% endtrans %}
-{% endblock %}
+{% endmacro %}
 
-{% block choice %}
+{% macro choice(name, choice) %}
 {% trans name=name, choice=choice %}choice {{ name }} {{ choice }}{% endtrans %}
-{% endblock %}
+{% endmacro %}
