@@ -4,6 +4,7 @@
 
 import argparse
 
+
 COMMANDS = dict()
 
 
@@ -23,17 +24,20 @@ def command(parameters=None):
 
 def get_command_parser():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest="command",
-            title='commands')
+    subparsers = parser.add_subparsers(title='commands')
 
     for command in COMMANDS.values():
         subparser = subparsers.add_parser(command['name'],
                 help=command['help'])
         for parameter in command['parameters']:
             subparser.add_argument(**parameter)
+        subparser.set_defaults(func=command['func'])
     return parser
+
 
 def parse_args(parser, *args, **kwargs):
     result = vars(parser.parse_args(*args, **kwargs))
-    prog = result.pop('command')
-    COMMANDS[prog]['func'](**result)
+    try:
+        result.pop('func')(**result)
+    except KeyError:
+        parser.print_help()
