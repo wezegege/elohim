@@ -8,6 +8,11 @@ python classes, using python's reflection
 import pkgutil
 
 
+def import_modules(path, module):
+    for _f, submodule, _i in pkgutil.walk_packages(path,
+            '{module}.'.format(module=module)):
+        __import__(submodule)
+
 def list_subclasses(cls, module, path):
     """find all subclasses of a classe, given a module where they
     are stored
@@ -32,9 +37,8 @@ def list_subclasses(cls, module, path):
             seen.add(sub)
             find_subclasses(sub, seen)
 
-    for _f, submodule, _i in pkgutil.walk_packages(path,
-            '{module}.'.format(module=module)):
-        __import__(submodule)
+    import_modules(path, module)
+
     result = set()
     find_subclasses(cls, result)
     return result
