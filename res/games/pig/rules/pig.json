@@ -57,179 +57,179 @@
                     {
                         "actions": [
                             {
-                                "destination": "move", 
-                                "library": "input", 
-                                "name": "ask-player", 
+                                "destination": "move",
+                                "library": "input",
+                                "name": "ask-player",
                                 "options": {
-                                    "hold": "Hold points", 
+                                    "hold": "Hold points",
                                     "roll": "Roll a dice"
                                 }
-                            }, 
+                            },
                             {
                                 "condition": {
                                     "expressions": [
                                         {
-                                            "library": "expression", 
-                                            "name": "player-variable", 
+                                            "library": "expression",
+                                            "name": "player-variable",
                                             "variable": "move"
-                                        }, 
+                                        },
                                         {
-                                            "library": "expression", 
-                                            "name": "value", 
+                                            "library": "expression",
+                                            "name": "value",
                                             "value": "roll"
                                         }
-                                    ], 
-                                    "library": "condition", 
+                                    ],
+                                    "library": "condition",
                                     "name": "equals"
-                                }, 
+                                },
                                 "iffalse": [
                                     {
-                                        "destination": "score::permanent", 
-                                        "library": "data", 
-                                        "name": "tranfer-current", 
+                                        "destination": "score::permanent",
+                                        "library": "data",
+                                        "name": "tranfer-current",
                                         "origin": "score::temporary"
-                                    }, 
+                                    },
                                     {
-                                        "library": "data", 
-                                        "name": "set-current", 
-                                        "value": false, 
+                                        "library": "data",
+                                        "name": "set-current",
+                                        "value": false,
                                         "variable": "turn"
                                     }
-                                ], 
+                                ],
                                 "iftrue": [
                                     {
-                                        "destination": "roll::dice", 
-                                        "library": "random", 
-                                        "name": "roll-dice-current", 
+                                        "destination": "roll::dice",
+                                        "library": "random",
+                                        "name": "roll-dice-current",
                                         "size": {
                                             "library": "expression",
                                             "name": "variable",
                                             "variable": "dice::size"
                                         }
 
-                                    }, 
+                                    },
                                     {
                                         "condition": {
                                             "element": {
-                                                    "library": "expression", 
-                                                    "name": "player-variable", 
+                                                    "library": "expression",
+                                                    "name": "player-variable",
                                                     "variable": "roll::dice"
-                                            }, 
+                                            },
                                             "list": {
-                                                    "library": "expression", 
-                                                    "name": "variable", 
+                                                    "library": "expression",
+                                                    "name": "variable",
                                                     "variable": "dice::wrong"
                                             },
-                                            "library": "condition", 
+                                            "library": "condition",
                                             "name": "in"
-                                        }, 
+                                        },
                                         "iffalse": [
                                             {
-                                                "destination": "score::temporary", 
-                                                "library": "data", 
-                                                "name": "tranfer-current", 
+                                                "destination": "score::temporary",
+                                                "library": "data",
+                                                "name": "tranfer-current",
                                                 "origin": "roll::dice"
-                                            }, 
+                                            },
                                             {
                                                 "condition": {
                                                     "left": {
                                                         "expressions": [
                                                             {
-                                                                "library": "expression", 
-                                                                "name": "player-variable", 
+                                                                "library": "expression",
+                                                                "name": "player-variable",
                                                                 "variable": "score::permanent"
-                                                            }, 
+                                                            },
                                                             {
-                                                                "library": "expression", 
-                                                                "name": "player-variable", 
+                                                                "library": "expression",
+                                                                "name": "player-variable",
                                                                 "variable": "score::temporary"
                                                             }
-                                                        ], 
-                                                        "library": "expression", 
+                                                        ],
+                                                        "library": "expression",
                                                         "name": "sum"
-                                                    }, 
-                                                    "library": "condition", 
-                                                    "name": "greater-equals", 
+                                                    },
+                                                    "library": "condition",
+                                                    "name": "greater-equals",
                                                     "right": {
-                                                        "library": "expression", 
+                                                        "library": "expression",
                                                         "name": "variable",
                                                         "variable": "goal"
                                                     }
-                                                }, 
-                                                "iffalse": [], 
+                                                },
+                                                "iffalse": [],
                                                 "iftrue": [
                                                     {
-                                                        "destination": "score::permanent", 
-                                                        "library": "data", 
-                                                        "name": "tranfer-current", 
+                                                        "destination": "score::permanent",
+                                                        "library": "data",
+                                                        "name": "tranfer-current",
                                                         "origin": "score::temporary"
-                                                    }, 
+                                                    },
                                                     {
-                                                        "library": "data", 
-                                                        "name": "set-current", 
-                                                        "value": false, 
+                                                        "library": "data",
+                                                        "name": "set-current",
+                                                        "value": false,
                                                         "variable": "turn"
                                                     }
-                                                ], 
-                                                "library": "core", 
+                                                ],
+                                                "library": "core",
                                                 "name": "if"
                                             }
-                                        ], 
+                                        ],
                                         "iftrue": [
                                             {
-                                                "library": "data", 
-                                                "name": "set-current", 
-                                                "value": 0, 
+                                                "library": "data",
+                                                "name": "set-current",
+                                                "value": 0,
                                                 "variable": "score::temporary"
-                                            }, 
+                                            },
                                             {
-                                                "library": "data", 
-                                                "name": "set-current", 
-                                                "value": false, 
+                                                "library": "data",
+                                                "name": "set-current",
+                                                "value": false,
                                                 "variable": "turn"
                                             }
-                                        ], 
-                                        "library": "core", 
+                                        ],
+                                        "library": "core",
                                         "name": "if"
                                     }
-                                ], 
-                                "library": "core", 
+                                ],
+                                "library": "core",
                                 "name": "if"
                             }
-                        ], 
-                        "library": "data", 
-                        "name": "while-current-true", 
+                        ],
+                        "library": "data",
+                        "name": "while-current-true",
                         "variable": "turn"
                     }
-                ], 
+                ],
                 "condition": {
                     "condition": {
                         "left": {
-                            "library": "expression", 
+                            "library": "expression",
                             "name": "variable",
                             "variable": "goal"
-                        }, 
-                        "library": "condition", 
-                        "name": "greater", 
+                        },
+                        "library": "condition",
+                        "name": "greater",
                         "right": {
-                            "library": "expression", 
-                            "name": "player-variable", 
+                            "library": "expression",
+                            "name": "player-variable",
                             "variable": "score::permanent"
                         }
-                    }, 
-                    "library": "condition", 
+                    },
+                    "library": "condition",
                     "name": "all"
-                }, 
-                "library": "core", 
+                },
+                "library": "core",
                 "name": "foreach-while"
-            }, 
+            },
             {
-                "criteria": "score::permanent", 
-                "library": "core", 
+                "criteria": "score::permanent",
+                "library": "core",
                 "name": "set-winner"
             }
-        ], 
-        "library": "core", 
+        ],
+        "library": "core",
         "name": "sequence"
     }
 }
