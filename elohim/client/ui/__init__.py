@@ -3,10 +3,10 @@
 """Client player by a human
 """
 
-from elohim import client
-
-class Ui(client.Client):
-    """Base class for a client played by a human player
-    """
-    type = 'ui'
-    name = 'ui'
+#from elohim import client
+#
+#class Ui(client.Client):
+#    """Base class for a client played by a human player
+#    """
+#    type = 'ui'
+#    name = 'ui'

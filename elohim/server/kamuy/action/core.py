@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from kamuy import types, action
+from elohim.server.kamuy import types, action
 
 namespace = action.namespace.namespace(__name__)
 

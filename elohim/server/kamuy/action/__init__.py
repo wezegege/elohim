@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from izanagi import plugin
+from elohim.utils import plugin
 
 namespace = plugin.Namespace()
 
