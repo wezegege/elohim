@@ -3,18 +3,20 @@
 """Library for handling interactions with player
 """
 
-from elohim.action import Action
-from elohim.action.parameter import PlayerData, ValueParameter
+from elohim import action
+from elohim.action import parameter
 
 
-class AskPlayer(Action):
+namespace = action.action.namespace(__name__)
+
+
+@namespace.entity('ask-player')
+class AskPlayer(action.Action):
     """Meet current player with choices
     """
-    library = 'input'
-    name = 'ask-player'
     parameters = [
-            ('destination', PlayerData()),
-            ('options', ValueParameter()),
+            ('destination', parameter.PlayerData()),
+            ('options', parameter.ValueParameter()),
             ]
 
     def play(self):

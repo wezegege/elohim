@@ -7,11 +7,13 @@ from elohim import action
 from elohim.action import parameter
 
 
+namespace = action.action.namespace(__name__)
+
+
+@namespace.entity('transfer-current')
 class TransferCurrent(action.Action):
     """Transfer value of a field to another, and reset it
     """
-    library = 'data'
-    name = 'tranfer-current'
     parameters = [
             ('origin', parameter.PlayerData()),
             ('destination', parameter.PlayerData()),
@@ -24,11 +26,10 @@ class TransferCurrent(action.Action):
         self.data.reset(origin)
 
 
+@namespace.entity('set-current')
 class SetCurrent(action.Action):
     """Set given field to current player
     """
-    library = 'data'
-    name = 'set-current'
     parameters = [
             ('variable', parameter.PlayerData()),
             ('value', parameter.ValueParameter()),
@@ -39,11 +40,10 @@ class SetCurrent(action.Action):
         self.data.set(variable, self.values['value'])
 
 
+@namespace.entity('while-current-true')
 class WhileCurrentTrue(action.Action):
     """Launch actions until a criteria evaluates as false
     """
-    library = 'data'
-    name = 'while-current-true'
     parameters = [
             ('variable', parameter.PlayerData()),
             ('actions', parameter.ActionList()),

@@ -3,9 +3,12 @@
 """Rule library for the turn-based rule engine system
 """
 
-from elohim.utils import classes
+from elohim.utils import classes, plugin
 import collections
 
+action = plugin.Namespace()
+expression = plugin.Namespace()
+condition = plugin.Namespace()
 
 class NonExistingEntity(Exception):
     """Exception raised when founding an unknown rule name
@@ -19,10 +22,7 @@ class NonExistingEntity(Exception):
 class Entity(object):
     """Base class for a rule
     """
-    type = 'entity'
     parameters = list()
-    name = 'entity'
-    library = 'core'
 
     def __init__(self, **kwargs):
         if not hasattr(self, 'values'):
@@ -92,13 +92,10 @@ class Entity(object):
             result[sub.library][sub.name] = sub
         return result
 
+@action.entity('action')
 class Action(Entity):
     """Base class for an action rule, which using affects the game state
     """
-    library = 'action'
-    name = 'action'
-    type = 'action'
-
     def play(self):
         """Main function for an action which describe the effects to be
         applied to the game state
@@ -117,26 +114,21 @@ class Action(Entity):
         current = self.data.get(['players', 'current', 'client'])
         return current.askplayer(options)
 
+@expression.entity('expresion')
 class Expression(Entity):
     """Base class for an expression, which correspond to a mathematical
     expression
     """
-    library = 'expression'
-    name = 'expression'
-    type = 'expression'
-
     def value(self, **_kwargs):
         """Determine the value of the expression
         """
         return None
 
 
+@condition.entity('condition')
 class Condition(Entity):
     """Base class for a condition
     """
-    library = 'condition'
-    name = 'condition'
-    type = 'condition'
 
     def evaluate(self, **_kwargs):
         """Determine whether the content of the condition can be evaluated

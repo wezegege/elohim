@@ -7,11 +7,13 @@ from elohim import action
 from elohim.action import parameter
 
 
+namespace = action.expression.namespace(__name__)
+
+
+@namespace.entity('value')
 class Value(action.Expression):
     """A constant
     """
-    library = 'expression'
-    name = 'value'
     parameters = [
             ('value', parameter.ValueParameter()),
             ]
@@ -20,11 +22,10 @@ class Value(action.Expression):
         return self.values['value']
 
 
+@namespace.entity('variable')
 class Variable(action.Expression):
     """A data tree leaf
     """
-    library = 'expression'
-    name = 'variable'
     parameters = [
             ('variable', parameter.GlobalData()),
             ]
@@ -33,11 +34,10 @@ class Variable(action.Expression):
         return self.data.get(self.values['variable'])
 
 
+@namespace.entity('player-variable')
 class PlayerVariable(action.Expression):
     """A player game data leaf
     """
-    library = 'expression'
-    name = 'player-variable'
     parameters = [
             ('variable', parameter.PlayerData()),
             ]
@@ -50,11 +50,10 @@ class PlayerVariable(action.Expression):
         return player.get(self.values['variable'])
 
 
+@namespace.entity('sum')
 class Sum(action.Expression):
     """The sum of several expressions
     """
-    library = 'expression'
-    name = 'sum'
     parameters = [
             ('expressions', parameter.ExpressionList()),
             ]

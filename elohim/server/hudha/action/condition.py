@@ -8,11 +8,13 @@ from elohim import action
 from elohim.action import parameter
 
 
+namespace = action.condition.namespace(__name__)
+
+
+@namespace.entity('equals')
 class Equals(action.Condition):
     """Equality condition
     """
-    library = 'condition'
-    name = 'equals'
     parameters = [
             ('expressions', parameter.ExpressionList()),
             ]
@@ -25,11 +27,10 @@ class Equals(action.Condition):
                         for expression in expressions[1:])
 
 
+@namespace.entity('greater-equals')
 class GreaterEquals(action.Condition):
     """Greater of equals condition
     """
-    library = 'condition'
-    name = 'greater-equals'
     parameters = [
             ('left', parameter.ExpressionParameter()),
             ('right', parameter.ExpressionParameter()),
@@ -41,11 +42,10 @@ class GreaterEquals(action.Condition):
         return bool(left >= right)
 
 
+@namespace.entity('greater')
 class Greater(action.Condition):
     """Greater condition
     """
-    library = 'condition'
-    name = 'greater'
     parameters = [
             ('left', parameter.ExpressionParameter()),
             ('right', parameter.ExpressionParameter()),
@@ -57,12 +57,11 @@ class Greater(action.Condition):
         return bool(left > right)
 
 
+@namespace.entity('in')
 class In(action.Condition):
     """Condition which, given an item and a sequence, determines if the item
     is contained by the container
     """
-    library = 'condition'
-    name = 'in'
     parameters = [
             ('element', parameter.ExpressionParameter()),
             ('list', parameter.ExpressionParameter()),
@@ -73,11 +72,11 @@ class In(action.Condition):
         container = self.values['list'].value()
         return element in container
 
+
+@namespace.entity('all')
 class All(action.Condition):
     """Condition which is evaluated for all players
     """
-    library = 'condition'
-    name = 'all'
     parameters = [
             ('condition', parameter.ConditionParameter()),
             ]

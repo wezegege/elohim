@@ -9,11 +9,13 @@ from elohim.action.parameter import PlayerData, ExpressionParameter
 import random
 
 
+namespace = action.action.namespace('__name__')
+
+
+@namespace.entity('roll-dice-current')
 class RollDiceCurrent(Action):
     """Roll dice with given size for current player
     """
-    library = 'random'
-    name = 'roll-dice-current'
     parameters = [
             ('destination', PlayerData()),
             ('size', ExpressionParameter()),

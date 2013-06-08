@@ -7,11 +7,13 @@ from elohim import action
 from elohim.action import parameter
 
 
+namespace = action.action.namespace(__name__)
+
+
+@namespace.entity('set-winner')
 class SetWinner(action.Action):
     """Determine the winner through some criteria
     """
-    library = 'core'
-    name = 'set-winner'
     parameters = [
         ('criteria', parameter.PlayerData()),
         ]
@@ -26,11 +28,10 @@ class SetWinner(action.Action):
         self.send('winner', name=name)
 
 
+@namespace.entity('if')
 class If(action.Action):
     """Launch actions depending on a condition evaluation
     """
-    library = 'core'
-    name = 'if'
     parameters = [
         ('condition', parameter.ConditionParameter()),
         ('iftrue', parameter.ActionList()),
@@ -46,11 +47,10 @@ class If(action.Action):
                 todo.play()
 
 
+@namespace.entity('foreach-while')
 class ForeachWhile(action.Action):
     """Iterate through players until a condition is met
     """
-    library = 'core'
-    name = 'foreach-while'
     parameters = [
         ('condition', parameter.ConditionParameter()),
         ('actions', parameter.ActionList()),
@@ -71,11 +71,10 @@ class ForeachWhile(action.Action):
                 todo.play()
 
 
+@namespace.entity('sequence')
 class Sequence(action.Action):
     """List of action to run sequentially
     """
-    library = 'core'
-    name = 'sequence'
     parameters = [
             ('actions', parameter.ActionList()),
             ]
