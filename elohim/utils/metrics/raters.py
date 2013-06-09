@@ -2,25 +2,25 @@
 # -*- coding: utf-8 -*-
 
 
-class Framerate(object):
+class Rater(object):
     def __init__(self):
-        self.last_frame = 0
+        self.last_tick = 0
         self.last_rate = 0
 
     def tick(self, timestamp):
         self.last_rate = self.compute(timestamp)
 
     def compute(self, timestamp):
-        result = 1 / (timestamp - self.last_frame)
-        self.last_frame = timestamp
+        result = 1 / (timestamp - self.last_tick)
+        self.last_tick = timestamp
         return result
 
     def value(self):
         return self.last_rate
 
 
-class FastFramerate(Framerate):
-    def __init__(self, ratio = 0.9):
+class FastRater(Rater):
+    def __init__(self, ratio=0.9):
         super().__init__()
         self.ratio = ratio
         self.reverted_ratio = 1 - ratio
@@ -32,7 +32,7 @@ class FastFramerate(Framerate):
         self.last_rate = smoothed_rate
 
 
-class SampleFramerate(Framerate):
+class SampleRater(Rater):
     DEFAULT_SAMPLES = 100
 
     def __init__(self, samples = DEFAULT_SAMPLES):
@@ -55,21 +55,21 @@ class SampleFramerate(Framerate):
         return self.rate_sum / self.max_samples
 
 
-class DerivativeFramerate(Framerate):
+class DerivativeRater(Rater):
     def __init__(self, limit=100):
         super().__init__()
         self.limit = limit
         self.index = 0
 
     def tick(self, timestamp):
-        duration = timestamp - self.last_frame
+        duration = timestamp - self.last_tick
         dividende = duration * self.last_rate + self.index - 1
         if dividende:
             result = self.index * self.last_rate / dividende
         else:
             result = 1 / duration
         self.last_rate = result
-        self.last_frame = timestamp
+        self.last_tick = timestamp
         if self.index < self.limit:
             self.index += 1
 

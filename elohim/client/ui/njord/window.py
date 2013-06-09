@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from elohim.client.ui.njord import pacer as pacers
+from elohim.utils.metrics import loophandlers
 
 import sfml
 import time
@@ -14,12 +14,13 @@ class Window(object):
     scale = 3
     name = "Game"
 
-    def __init__(self, pacer=None):
+    def __init__(self, loophandler=None):
         self.window = sfml.RenderWindow(
                 sfml.VideoMode(self.width * self.scale,
                     self.height * self.scale),
                 self.name)
-        self.pacer = pacers.Pacer() if pacer is None else pacer
+        self.loophandler = loophandlers.LoopHandler() \
+                if loophandler is None else loophandler
 
     def render(self):
         self.window.clear()
@@ -35,7 +36,7 @@ class Window(object):
 
     def run(self):
         while self.window.is_open:
-            with self.pacer:
+            with self.loophandler:
                 self.handle_events()
                 self.compute()
                 self.render()

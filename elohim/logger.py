@@ -42,12 +42,15 @@ class LoggerFabric(object):
 
 class LoggerProcess(multiprocessing.Process):
 
-    def __init__(self, *args, **kwargs):
-        super(LoggerProcess, self).__init__(*args, **kwargs)
-        self.message_queue = multiprocessing.Queue()
+    def __init__(self, loophandler=None, message_queue=None):
+        super(LoggerProcess, self).__init__(name='Logger')
+        self.message_queue = multiprocessing.Queue() \
+                if message_queue is None else message_queue
         self.initialize()
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Finished logger initialization')
+        self.loophandler = loophandlers.LoopHandler() \
+                if loophandler is None else loophandler
 
     def createHandler(self):
         class QueueHandler(logging.Handler):
@@ -87,10 +90,11 @@ class LoggerProcess(multiprocessing.Process):
         self.logger.debug('Starting logger process')
         while True:
             record = self.message_queue.get()
-            if not isinstance(record, logging.LogRecord):
-                break
-            logger = LoggerFabric.get_logger(record.name, prefix='log.')
-            logger.handle(record)
+            with self.loophandler:
+                if not isinstance(record, logging.LogRecord):
+                    break
+                logger = LoggerFabric.get_logger(record.name, prefix='log.')
+                logger.handle(record)
         LoggerFabric.get_logger(__name__).debug('Ending logger process')
 
     def end(self):
