@@ -19,6 +19,18 @@ class LoggerFabric(object):
     file_size = 1024 * 1024
     backup_count = 7
 
+    defaults = {
+            'console_enabled' : True,
+            'console_level' : 'INFO',
+            'console_format' : '%(asctime)s [%(levelname).5s] %(message)s',
+            'console_datefmt' : '%Y-%m-%d %H:%M:%S',
+            'file_enabled' : True,
+            'file_level' : 'DEBUG',
+            'file_format' : '%(asctime)s [%(levelname).5s](%(lineno).3d %(message)s',
+            'file_datefmt' : '%Y-%m-%d %H:%M:%S,%f',
+            'file_separate' : True,
+            }
+
     @classmethod
     def get_logger(cls, name, prefix=''):
         if name in cls.logs:
